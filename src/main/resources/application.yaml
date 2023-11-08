@@ -1,0 +1,5 @@
+#\u70ED\u90E8\u7F72
+spring:
+  devtools:
+    restart:
+      enabled: true
