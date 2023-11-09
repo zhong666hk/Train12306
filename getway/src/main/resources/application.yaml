@@ -1,0 +1,18 @@
+server:
+  port: 8090
+
+spring:
+  devtools:
+    restart:
+      enabled: true
+  cloud:
+    gateway:
+      routes:
+        - id: member
+          uri: http://127.0.0.1:8001
+          predicates:
+            - Path=/member/hello
+        - id: member_reject
+          uri: http://127.0.0.1:8001
+          predicates:
+            - Path=/member/**

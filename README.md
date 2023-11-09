@@ -64,3 +64,24 @@ public class LogAspect {
     }
 }
 ```
+## 新增getway网关模块  
+* 1配置路由转发  
+```yaml
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: member
+          uri: http://127.0.0.1:8001
+          predicates:
+            - Path=/member/hello
+        - id: member_reject
+          uri: http://127.0.0.1:8001
+          predicates:
+            - Path=/member/**
+```
+* 2.配置gateway自带的日志  
+在配置jvm参数中配置
+```shell
+-Dreactor.netty.http.server.accessLogEnabled=true
+```

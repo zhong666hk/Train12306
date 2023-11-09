@@ -12,4 +12,9 @@ public class MemberController {
     public String hello(){
         return "hello";
     }
+
+    @RequestMapping("/reject")
+    public String reject(){
+        return "reject";
+    }
 }
