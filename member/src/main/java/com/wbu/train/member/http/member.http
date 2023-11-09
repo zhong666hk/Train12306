@@ -2,5 +2,11 @@ GET http://localhost:8001/member/hello
 Accept: application/json
 
 ###
-GET http://localhost:8090/member/reject
+GET http://localhost:8001/member/reject
 Accept: application/json
+
+###会员注册
+POST http://localhost:8001/member/register
+Content-Type: application/x-www-form-urlencoded
+
+mobile=16607211504

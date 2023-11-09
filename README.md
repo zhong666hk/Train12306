@@ -1,6 +1,6 @@
 # Train12306
 12306项目初始化  
-## 添加common模块 和 注释注解
+## 0.02添加common模块 和 注释注解
 * 1.构建pom父工程  
 **< build >** 标签删掉，不需要用maven打包
 * 2.依赖的统一管理 **< dependencyManagement >**
@@ -64,7 +64,7 @@ public class LogAspect {
     }
 }
 ```
-## 新增getway网关模块  
+## 0.03新增getway网关模块 
 * 1配置路由转发  
 ```yaml
 spring:
@@ -84,4 +84,187 @@ spring:
 在配置jvm参数中配置
 ```shell
 -Dreactor.netty.http.server.accessLogEnabled=true
+```
+## 0.04 Mybatis-plus的整合统一返回结果、请求参数封装、全局异常封装
+* **mybatis-plus的整合**
+```yaml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-boot-starter</artifactId>
+    <version>3.5.3.1</version>
+</dependency>
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.26</version>
+</dependency>
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.28</version>
+</dependency>
+```
+注意springBoot3.0和mybatis-plus的版本的整合  
+
+全局异常和统一返回结果都是封装在**common模块中**  
+请求封装都是放在各个模块当中  
+*  **返回值的封装**
+```java
+@Data
+public class CommonRespond <T>{
+    //响应状态码
+    private int code;
+    // 响应信息
+    private String message;
+
+    // 返回结果
+    private T data;
+
+    public CommonRespond(){}
+
+    public CommonRespond(int code,String message,T data){
+        this.code=code;
+        this.message=message;
+        this.data=data;
+    }
+
+    public CommonRespond(int code,String message){
+        this(code,message,null);
+    }
+
+    public CommonRespond(int code,T data){
+        this(code,null,data);
+    }
+
+    public static <T>CommonRespond<T> error(AppExceptionExample appExceptionExample){
+        return new CommonRespond<>(appExceptionExample.getCode(), appExceptionExample.getMessage());
+    }
+
+    public static <T>CommonRespond<T> error(RespondExample respondExample){
+        return new CommonRespond<>(respondExample.getCode(),respondExample.getMessage());
+    }
+
+
+    public static <T>CommonRespond<T> succeed(String message, T data){
+        return new CommonRespond<>(200,message,data);
+    }
+
+    public static <T>CommonRespond<T> succeed(T data){
+        return new CommonRespond<>(200,null,data);
+    }
+}
+```
+* **返回值的响应业务枚举**
+```java
+public enum RespondExample{
+    INVALID_CODE(10000,"验证码无效"),
+    USERNAME_NOT_EXISTS(10001,"用户名不存在"),
+    USER_ROLE_NOT_PERMISSION(10003,"用户权限不足"),
+    REQUEST_PARAMETER_IS_ILLEGAL(10004,"参数不合法");
+
+    private int code;
+    private String message;
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    RespondExample(){}
+    RespondExample(int code,String message){
+        this.code=code;
+        this.message=message;
+    }
+}
+```
+* **请求参数的封装**
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class MemberRegisterReq {
+    private String mobile;
+}
+```
+
+* **异常的封装**
+```java
+@Data
+public class MyException extends RuntimeException{
+    private int code;
+
+    private String message;
+
+    public MyException(){}
+
+    public MyException(int code,String message){
+        this.code=code;
+        this.message=message;
+    }
+    public MyException(AppExceptionExample appExceptionExample){
+        this(appExceptionExample.getCode(), appExceptionExample.getMessage());
+    }
+}
+```
+* **全局异常拦截器**
+```java
+@RestControllerAdvice
+public class GlobalException {
+    private final Logger logger = LoggerFactory.getLogger(GlobalException.class);
+    /**
+        第一个T表示<T>是一个泛型 --声明参数
+        第二个T表示方法返回的是T类型的数据
+    */
+    @ExceptionHandler(MyException.class)
+    public <T>CommonRespond<T> MyExceptionHandler(MyException e, ServletRequest request){
+        logger.error(e.toString());
+        return new CommonRespond<>(e.getCode(),e.getMessage());
+    }
+    
+    @ExceptionHandler(Exception.class)
+    public <T>CommonRespond<T> ExceptionHandler(Exception e, ServletRequest request){
+
+        return CommonRespond.error(AppExceptionExample.SYSTEM_INNER_ERROR);
+    }
+}
+```
+* **异常枚举**
+```java
+public enum AppExceptionExample {
+    SYSTEM_INNER_ERROR(500,"系统内部异常"),
+    MEMBER_MOBILE_HAS_EXIST(10002,"该手机已注册过用户");
+    private int code;
+    private String message;
+
+    private AppExceptionExample(int code, String message){
+        this.code=code;
+        this.message=message;
+    }
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}
 ```
