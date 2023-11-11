@@ -4,10 +4,14 @@ import com.wbu.train.common.respon.CommonRespond;
 import jakarta.servlet.ServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestControllerAdvice
 public class GlobalException {
@@ -22,10 +26,14 @@ public class GlobalException {
         return new CommonRespond<>(e.getCode(),e.getMessage());
     }
 
+    @ExceptionHandler(BindException.class)
+    public <T>CommonRespond<T> MyExceptionHandler(BindException e, ServletRequest request){
+        e.printStackTrace();
+        return new CommonRespond<>(10002, e.getAllErrors().stream().map(ex->ex.getDefaultMessage()).collect(Collectors.joining("\n")));
+    }
 
     @ExceptionHandler(Exception.class)
     public <T>CommonRespond<T> ExceptionHandler(Exception e, ServletRequest request){
-
         return CommonRespond.error(AppExceptionExample.SYSTEM_INNER_ERROR);
     }
 

@@ -4,10 +4,14 @@ import cn.hutool.core.util.ObjectUtil;
 import com.wbu.train.common.Aspect.annotation.LogAnnotation;
 import com.wbu.train.common.respon.CommonRespond;
 import com.wbu.train.common.respon.RespondExample;
-import com.wbu.train.member.domain.Member;
+import com.wbu.train.member.req.MemberLoginReq;
 import com.wbu.train.member.req.MemberRegisterReq;
+import com.wbu.train.member.req.MemberSendCodeReq;
+import com.wbu.train.member.resp.LoginResp;
 import com.wbu.train.member.service.MemberService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,24 +20,53 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
     @Autowired
     private MemberService memberService;
+
     @LogAnnotation
     @RequestMapping("/hello")
-    public String hello(){
+    public String hello() {
         return "hello";
     }
 
     @RequestMapping("/reject")
-    public String reject(){
+    public String reject() {
         return "reject";
     }
 
     @LogAnnotation
-    @RequestMapping("/register")
-    public CommonRespond<Boolean> register(MemberRegisterReq memberRegisterReq){
-        if (ObjectUtil.isEmpty(memberRegisterReq)){
+    @PostMapping("/register")
+    public CommonRespond<Long> register(@Valid MemberRegisterReq memberRegisterReq) {
+        if (ObjectUtil.isEmpty(memberRegisterReq)) {
             return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
         }
         return memberService.register(memberRegisterReq);
+    }
+
+    /**
+     * 获取短信验证码
+     * @param memberSendCodeReq
+     * @return
+     */
+    @LogAnnotation
+    @PostMapping("/sendCode")
+    public CommonRespond<String> sendCode(@Valid MemberSendCodeReq memberSendCodeReq) {
+        if (ObjectUtil.isEmpty(memberSendCodeReq)) {
+            return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
+        }
+        return memberService.sendCode(memberSendCodeReq);
+    }
+
+    /**
+     * 登录接口
+     * @param memberLoginReq
+     * @return
+     */
+    @LogAnnotation
+    @PostMapping("/login")
+    public CommonRespond<LoginResp> login(@Valid MemberLoginReq memberLoginReq) {
+        if (ObjectUtil.isEmpty(memberLoginReq)) {
+            return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
+        }
+        return memberService.login(memberLoginReq);
     }
 
 }

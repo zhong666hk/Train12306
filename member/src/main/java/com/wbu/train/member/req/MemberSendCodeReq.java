@@ -5,12 +5,11 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberRegisterReq {
+public class MemberSendCodeReq {
     /**
      * @NotEmpty 用在集合类上面
      * @NotBlank 用在String上面

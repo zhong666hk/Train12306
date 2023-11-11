@@ -268,3 +268,132 @@ public enum AppExceptionExample {
     }
 }
 ```
+## 0.05 验证码接口、登录接口的开发
+* 验证码接口
+  * 创建验证码的数据库表CodeInformation和触发器-->过期时间是生成
+  * 开发获取生成验证码的接口--(4位字符的)
+  * ```mysql
+    create table code_information
+    (
+    code_id         int auto_increment comment '主键'
+    primary key,
+    mobile          varchar(11)                        not null comment '手机号',
+    code            varchar(10)                        not null comment '验证码',
+    is_delete       tinyint  default 0                 null comment '是否删除 0未删除 1已经删除',
+    create_time     datetime default CURRENT_TIMESTAMP null comment '创建时间',
+    expiration_time timestamp                          null comment '过期时间',
+    business_type   tinyint                            not null comment '业务类型',
+    use_time        timestamp                          null on update CURRENT_TIMESTAMP comment '使用时间'
+    )
+    comment '验证码';
+    create definer = root@localhost trigger set_expiration_time
+    before insert
+    on code_information
+    for each row
+    BEGIN
+    SET NEW.expiration_time = NOW() + INTERVAL 30 MINUTE ;  -- 设置为当前时间加30分钟
+    END;
+``` ```
+* 验证码接口的开发
+```java
+@LogAnnotation
+    @PostMapping("/sendCode")
+    public CommonRespond<String> sendCode(@Valid MemberSendCodeReq memberSendCodeReq) {
+        if (ObjectUtil.isEmpty(memberSendCodeReq)) {
+            return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
+        }
+        return memberService.sendCode(memberSendCodeReq);
+    }
+```
+* service的开发
+```java
+public CommonRespond<String> sendCode(MemberSendCodeReq memberRegisterReq) {
+        //为空返回
+        if (ObjectUtil.isEmpty(memberRegisterReq)) {
+            return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
+        }
+        String mobile = memberRegisterReq.getMobile();
+        QueryWrapper<Member> memberQueryWrapper = new QueryWrapper<>();
+        memberQueryWrapper.eq("mobile", mobile);
+        List<Member> list = this.list(memberQueryWrapper);
+        // 手机号不存在就创建并且发送验证码 存在就直接发送验证码
+        if (CollectionUtil.isEmpty(list)) {
+            Member member = new Member();
+            member.setMobile(mobile);
+            member.setId(SnowUtil.getSnowflakeNextId());
+            // 注册失败就抛出异常
+            if (!this.save(member)) {
+                return new CommonRespond<>(500, "获取验证码失败");
+            }
+        }
+        // 获取验证码
+        String code = RandomUtil.randomString(4);
+        // 保存短信记录表: 手机号，短信验证码，有效期，是否已经使用，业务类型，创建时间，使用时间
+        CodeInformation codeInformation = new CodeInformation();
+        codeInformation.setBusinessType(BusinessType.TYPE_LOGIN.getType());
+        codeInformation.setCode(code);
+        codeInformation.setMobile(mobile);
+        if (!codeInformationService.save(codeInformation)){
+            throw new MyException(10006,"codeInformationService插入异常");
+        }
+        //TODO 对接短信通道
+
+        return CommonRespond.succeed(code);
+    }
+```
+* 登录接口的开发
+```java
+@LogAnnotation
+    @PostMapping("/login")
+    public CommonRespond<LoginResp> login(@Valid MemberLoginReq memberLoginReq) {
+        if (ObjectUtil.isEmpty(memberLoginReq)) {
+            return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
+        }
+        return memberService.login(memberLoginReq);
+    }
+```
+* 登录service的开发
+```java
+public CommonRespond<LoginResp> login(MemberLoginReq memberLoginReq) {
+        // 根据这个信息去查codeInformation的消息 看验证码是否过期是否可以用
+        String code = memberLoginReq.getCode();
+        String mobile = memberLoginReq.getMobile();
+        QueryWrapper<CodeInformation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("code",code).eq("mobile",mobile);
+        CodeInformation codeInformation = codeInformationService.getOne(queryWrapper);
+        //  未查到信息-->是逻辑删除  -->手机和验证码早就已经验证过了-->验证码已经使用过
+        if (ObjectUtil.isNull(codeInformation)){
+            throw new MyException(AppExceptionExample.MEMBER_CODE_HAS_USED);
+        }
+        // 如果验证码已经过期
+        Date expirationTime = codeInformation.getExpirationTime();
+        if (DateUtil.compare(expirationTime,new Date())<0){
+            throw new MyException(AppExceptionExample.MEMBER_CODE_EXPIRE);
+        }
+
+        // 如果验证码类型不匹配
+        if (!codeInformation.getBusinessType().equals(BusinessType.TYPE_LOGIN.getType())){
+            throw new MyException(AppExceptionExample.MEMBER_CODE_TYPE_ERROR);
+        }
+        // 通过校验使用
+        codeInformation.setUseTime(new Date());
+        // -->更新使用时间
+        if (!codeInformationService.updateById(codeInformation)) {
+            throw new MyException(AppExceptionExample.SYSTEM_INNER_ERROR);
+        }
+        // 标记已经使用过
+        if (!codeInformationService.removeById(codeInformation.getCodeId())) {
+            throw new MyException(AppExceptionExample.SYSTEM_INNER_ERROR);
+        }
+        return CommonRespond.succeed("登陆成功",new LoginResp(true));
+    }
+```
+* 登录响应的封装LoginResp
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoginResp {
+    private boolean loginState;
+}
+```

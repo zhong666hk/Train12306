@@ -9,4 +9,17 @@ Accept: application/json
 POST http://localhost:8001/member/register
 Content-Type: application/x-www-form-urlencoded
 
-mobile=16607211504
+mobile=16607211503
+
+###获取验证码
+POST http://localhost:8001/member/sendCode
+Content-Type: application/x-www-form-urlencoded
+
+mobile=16607211503
+
+###登录
+POST http://localhost:8001/member/login
+Content-Type: application/x-www-form-urlencoded
+
+mobile=16607211503 &
+code=tSBW
