@@ -7,8 +7,21 @@ spring:
       enabled: true
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"  #请求来源
+            allowedMethods: "*"  #请求的方式
+            allowedHeaders: "*"  #允许携带请求头
+            allowCredentials: true  #允许携带cookie
+        # 解决options请求被拦截的问题
+        add-to-simple-url-handler-mapping: true
       routes:
         - id: member
+          uri: http://127.0.0.1:8001
+          predicates:
+            - Path=/api/member/**
+        - id: member_hello
           uri: http://127.0.0.1:8001
           predicates:
             - Path=/member/hello

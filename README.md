@@ -397,3 +397,30 @@ public class LoginResp {
     private boolean loginState;
 }
 ```
+## 0.06 跨域请求 、@RequestBody对json<==>JavaBean参数的映射
+* **gateway跨域请求**
+```yaml
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"  #请求来源
+            allowedMethods: "*"  #请求的方式
+            allowedHeaders: "*"  #允许携带请求头
+            allowCredentials: true  #允许携带cookie
+        # 解决options请求被拦截的问题
+        add-to-simple-url-handler-mapping: true
+```
+* **@RequestBody对json<==>JavaBean参数的映射**
+```java
+@LogAnnotation
+    @PostMapping("/login")
+    public CommonRespond<LoginResp> login(@Valid @RequestBody MemberLoginReq memberLoginReq) {
+        if (ObjectUtil.isEmpty(memberLoginReq)) {
+            return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
+        }
+        return memberService.login(memberLoginReq);
+    }
+```

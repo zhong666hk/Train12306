@@ -11,9 +11,7 @@ import com.wbu.train.member.resp.LoginResp;
 import com.wbu.train.member.service.MemberService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/member")
@@ -48,7 +46,7 @@ public class MemberController {
      */
     @LogAnnotation
     @PostMapping("/sendCode")
-    public CommonRespond<String> sendCode(@Valid MemberSendCodeReq memberSendCodeReq) {
+    public CommonRespond<String> sendCode(@Valid @RequestBody MemberSendCodeReq memberSendCodeReq) {
         if (ObjectUtil.isEmpty(memberSendCodeReq)) {
             return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
         }
@@ -62,7 +60,7 @@ public class MemberController {
      */
     @LogAnnotation
     @PostMapping("/login")
-    public CommonRespond<LoginResp> login(@Valid MemberLoginReq memberLoginReq) {
+    public CommonRespond<LoginResp> login(@Valid @RequestBody MemberLoginReq memberLoginReq) {
         if (ObjectUtil.isEmpty(memberLoginReq)) {
             return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
         }
