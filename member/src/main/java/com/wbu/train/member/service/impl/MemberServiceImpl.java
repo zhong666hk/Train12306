@@ -13,6 +13,7 @@ import com.wbu.train.common.exception.MyException;
 import com.wbu.train.common.respon.CommonRespond;
 import com.wbu.train.common.respon.RespondExample;
 import com.wbu.train.common.util.BusinessType;
+import com.wbu.train.common.util.JwtUtil;
 import com.wbu.train.common.util.SnowUtil;
 import com.wbu.train.member.domain.CodeInformation;
 import com.wbu.train.member.domain.Member;
@@ -135,7 +136,10 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         if (!codeInformationService.removeById(codeInformation.getCodeId())) {
             throw new MyException(AppExceptionExample.SYSTEM_INNER_ERROR);
         }
-        return CommonRespond.succeed("登陆成功",new LoginResp(true));
+        //生成token
+        Member member = this.query().select("id").eq("mobile", mobile).one();
+        String token = JwtUtil.createToken(member.getId(), mobile);
+        return CommonRespond.succeed("登陆成功",new LoginResp(true,token));
     }
 }
 

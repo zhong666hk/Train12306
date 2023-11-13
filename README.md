@@ -424,3 +424,98 @@ spring:
         return memberService.login(memberLoginReq);
     }
 ```
+## 0.07 JWT单点登录的实现
+* 增加JTW的加密和解密工具类（hutool）
+```java
+public class JwtUtil {
+    private static final Logger LOG = LoggerFactory.getLogger(JwtUtil.class);
+    private static final String key="zzb12306";
+    public static String createToken(Long id, String mobile){
+        DateTime now = DateTime.now();
+        DateTime expTime = now.offsetNew(DateField.HOUR, 24);
+        Map<String, Object> payload = new HashMap<>();
+        // 签发时间
+        payload.put(JWTPayload.ISSUED_AT, now);
+        // 过期时间
+        payload.put(JWTPayload.EXPIRES_AT, expTime);
+        // 生效时间
+        payload.put(JWTPayload.NOT_BEFORE, now);
+        // 内容
+        payload.put("id", id);
+        payload.put("mobile", mobile);
+        String token = JWTUtil.createToken(payload, key.getBytes());
+        LOG.info("生成JWT token：{}", token);
+        return token;
+    }
+    public static boolean validate(String token) {
+        try{
+            JWT jwt = JWTUtil.parseToken(token).setKey(key.getBytes());
+            // validate包含了verify
+            boolean validate = jwt.validate(0);
+            LOG.info("JWT token校验结果：{}", validate);
+            return validate;
+        }catch (Exception e){
+            LOG.warn("token校验异常{}",e);
+            return false;
+        }
+    }
+    public static JSONObject getJSONObject(String token) {
+        JWT jwt = JWTUtil.parseToken(token).setKey(key.getBytes());
+        JSONObject payloads = jwt.getPayloads();
+        payloads.remove(JWTPayload.ISSUED_AT);
+        payloads.remove(JWTPayload.EXPIRES_AT);
+        payloads.remove(JWTPayload.NOT_BEFORE);
+        LOG.info("根据token获取原始内容：{}", payloads);
+        return payloads;
+    }
+}
+```
+* 更改登录的响应加上token这个属性
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoginResp {
+    private boolean loginState;
+    private String token;
+}
+```
+* 登录service上生成Token
+```java
+public CommonRespond<LoginResp> login(MemberLoginReq memberLoginReq) {
+        // 根据这个信息去查codeInformation的消息 看验证码是否过期是否可以用
+        String code = memberLoginReq.getCode();
+        String mobile = memberLoginReq.getMobile();
+        QueryWrapper<CodeInformation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("code",code).eq("mobile",mobile);
+        CodeInformation codeInformation = codeInformationService.getOne(queryWrapper);
+        //  未查到信息-->是逻辑删除  -->手机和验证码早就已经验证过了-->验证码已经使用过
+        if (ObjectUtil.isNull(codeInformation)){
+            throw new MyException(AppExceptionExample.MEMBER_CODE_HAS_USED);
+        }
+        // 如果验证码已经过期
+        Date expirationTime = codeInformation.getExpirationTime();
+        if (DateUtil.compare(expirationTime,new Date())<0){
+            throw new MyException(AppExceptionExample.MEMBER_CODE_EXPIRE);
+        }
+
+        // 如果验证码类型不匹配
+        if (!codeInformation.getBusinessType().equals(BusinessType.TYPE_LOGIN.getType())){
+            throw new MyException(AppExceptionExample.MEMBER_CODE_TYPE_ERROR);
+        }
+        // 通过校验使用
+        codeInformation.setUseTime(new Date());
+        // -->更新使用时间
+        if (!codeInformationService.updateById(codeInformation)) {
+            throw new MyException(AppExceptionExample.SYSTEM_INNER_ERROR);
+        }
+        // 标记已经使用过
+        if (!codeInformationService.removeById(codeInformation.getCodeId())) {
+            throw new MyException(AppExceptionExample.SYSTEM_INNER_ERROR);
+        }
+        //生成token
+        Member member = this.query().select("id").eq("mobile", mobile).one();
+        String token = JwtUtil.createToken(member.getId(), mobile);
+        return CommonRespond.succeed("登陆成功",new LoginResp(true,token));
+    }
+```

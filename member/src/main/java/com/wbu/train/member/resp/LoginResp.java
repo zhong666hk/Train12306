@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginResp {
     private boolean loginState;
+    private String token;
 }

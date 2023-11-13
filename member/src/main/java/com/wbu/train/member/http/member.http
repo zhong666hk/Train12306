@@ -2,11 +2,11 @@ GET http://localhost:8001/member/hello
 Accept: application/json
 
 ###
-GET http://localhost:8001/member/reject
+GET http://localhost:8090/api/member/reject
 Accept: application/json
 
 ###会员注册---以post表格的形式提交
-POST http://localhost:8001/member/register
+POST http://localhost:8001/api/member/register
 Content-Type: application/x-www-form-urlencoded
 
 mobile=16607211503
@@ -16,16 +16,11 @@ POST http://localhost:8090/api/member/sendCode
 Content-Type: application/json;charset=utf-8
 
 {"mobile":"16607211503"}
-
-###获取验证码
-POST http://localhost:8001/api/member/sendCode
-Content-Type: application/x-www-form-urlencoded
-
-mobile=16607211503
-
 ###登录
-POST http://localhost:8001/member/login
-Content-Type: application/x-www-form-urlencoded
+POST http://localhost:8090/api/member/login
+Content-Type: application/json;charset=utf-8
+token:"123"
 
-mobile=16607211503 &
-code=tSBW
+{"mobile":"16607211503",
+  "code":"kSRj"
+}
