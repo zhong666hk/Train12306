@@ -519,3 +519,56 @@ public CommonRespond<LoginResp> login(MemberLoginReq memberLoginReq) {
         return CommonRespond.succeed("登陆成功",new LoginResp(true,token));
     }
 ```
+## 0.08 member拦截器-->解析token中的数据到ThreadLocal中
+* comment中定义一个ThreadLocal的类来保存member的信息 和 一个拦截器
+```java
+public class LoginMemberContext {
+    private static final Logger LOG= LoggerFactory.getLogger(LoginMemberContext.class);
+    private static ThreadLocal<LoginResp> member=new ThreadLocal<>();
+    public static LoginResp getLoginResp(){return member.get();}
+    public static void setMember(LoginResp loginResp){LoginMemberContext.member.set(loginResp);}
+
+    public static Long getId(){
+        try {
+            return member.get().getId();
+        }catch (Exception e){
+            LOG.error("获取登录会员信息失败",e.getMessage());
+            throw e;
+        }
+    }
+}
+```
+* comment中拦截器的定义
+```java
+@Component
+public class MemberInterceptor implements HandlerInterceptor {
+  private final Logger LOG= LoggerFactory.getLogger(MemberInterceptor.class);
+  @Override
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    String token=request.getHeader("token");
+    LOG.info("token为{}",token);
+    JSONObject jsonObject = JwtUtil.getJSONObject(token);
+    LoginResp loginResp = jsonObject.toBean(LoginResp.class);
+    LOG.warn("当前登录会员{}",loginResp);
+    // 设置当前会员的参数
+    LoginMemberContext.setMember(loginResp);
+    return true;
+  }
+}
+```
+* member中拦截器的注册
+```java
+@Configuration
+public class SpringMVCConfig implements WebMvcConfigurer {
+    // 必需要注入到容器中的。
+    @Resource
+    MemberInterceptor memberInterceptor;
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(memberInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/member/sendCode",
+                        "/member/login");
+    }
+}
+```
