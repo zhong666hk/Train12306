@@ -1,0 +1,11 @@
+
+###乘车人的保存 ---从全局变量中获取token
+POST http://localhost:8090/api/passenger/save
+Content-Type: application/json;charset=utf-8
+token: {{token}}
+
+{
+  "name": "zs",
+  "idCard": "1234567891011",
+  "type":"1"
+}

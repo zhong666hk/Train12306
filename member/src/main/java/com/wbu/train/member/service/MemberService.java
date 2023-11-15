@@ -3,11 +3,11 @@ package com.wbu.train.member.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wbu.train.common.respon.CommonRespond;
+import com.wbu.train.common.respon.LoginResp;
 import com.wbu.train.member.domain.Member;
 import com.wbu.train.member.req.MemberLoginReq;
 import com.wbu.train.member.req.MemberRegisterReq;
 import com.wbu.train.member.req.MemberSendCodeReq;
-import com.wbu.train.member.resp.LoginResp;
 
 /**
  * @author 钟正保

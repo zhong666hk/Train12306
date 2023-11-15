@@ -21,11 +21,15 @@ spring:
           uri: http://127.0.0.1:8001
           predicates:
             - Path=/api/member/**
+        - id: passenger
+          uri: http://127.0.0.1:8001
+          predicates:
+            - Path=/api/passenger/**
         - id: member_hello
           uri: http://127.0.0.1:8001
           predicates:
-            - Path=/member/hello
+            - Path=/api/member/hello
         - id: member_reject
           uri: http://127.0.0.1:8001
           predicates:
-            - Path=/member/**
+            - Path=/api/member/**

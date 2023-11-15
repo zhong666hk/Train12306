@@ -7,7 +7,12 @@ public enum AppExceptionExample {
     MEMBER_CODE_HAS_USED(10003,"验证码已经使用过"),
 
     MEMBER_CODE_EXPIRE(10001,"验证码已经过期"),
-    MEMBER_CODE_TYPE_ERROR(10005,"请输入有效的验证码");
+    MEMBER_CODE_TYPE_ERROR(10005,"请输入有效的验证码"),
+    PASSENGER_SAVE_ERROR(10006,"乘客保存异常"),
+
+    NOT_LOGIN(10007,"未登录"),
+    ;
+
 
     private int code;
     private String message;

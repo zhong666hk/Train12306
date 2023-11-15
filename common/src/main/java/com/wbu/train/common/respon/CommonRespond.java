@@ -38,6 +38,7 @@ public class CommonRespond <T>{
     }
 
 
+
     public static <T>CommonRespond<T> succeed(String message, T data){
         return new CommonRespond<>(200,message,data);
     }
