@@ -23,5 +23,11 @@ public interface PassengerService extends IService<Passenger> {
      * @param req
      * @return
      */
-    public Page<Passenger> queryPassengers(PassengerQueryReq req);
+    public Page<PassengerQueryResp> queryPassengers(PassengerQueryReq req);
+
+    /**
+     * 删除passenger 通过id
+     * @param id
+     */
+    public boolean  deleteById(Long id);
 }

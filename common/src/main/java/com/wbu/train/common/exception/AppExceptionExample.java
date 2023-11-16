@@ -11,6 +11,7 @@ public enum AppExceptionExample {
     PASSENGER_SAVE_ERROR(10006,"乘客保存异常"),
 
     NOT_LOGIN(10007,"未登录"),
+    PASSENGER_DELETE_ERROR(10008,"乘客删除异常"),
     ;
 
 

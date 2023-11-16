@@ -1,5 +1,6 @@
 package com.wbu.train.member.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wbu.train.common.Aspect.annotation.LogAnnotation;
@@ -37,7 +38,7 @@ public class PassengerController {
         }
         try{
             if (passengerService.savePassenger(passengerSaveReq)) {
-                return CommonRespond.succeed("添加乘客成功！！！",true);
+                return CommonRespond.succeed("乘客添加或修改成功！！！",true);
             }
         }catch (Exception e){
             LOG.error(e.getMessage());
@@ -49,9 +50,18 @@ public class PassengerController {
 
     @LogAnnotation
     @GetMapping("/query_list")
-    public CommonRespond<Page<Passenger>> query_list(@Valid PassengerQueryReq passengerQueryReq) {
+    public CommonRespond<Page<PassengerQueryResp>> query_list(@Valid PassengerQueryReq passengerQueryReq) {
         passengerQueryReq.setMemberId(LoginMemberContext.getId());
-        Page<Passenger> page = passengerService.queryPassengers(passengerQueryReq);
+        Page<PassengerQueryResp> page = passengerService.queryPassengers(passengerQueryReq);
         return CommonRespond.succeed(page);
+    }
+
+    @LogAnnotation
+    @DeleteMapping("/delete/{id}")
+    public CommonRespond<Boolean> delete(@PathVariable Long id) {
+        if (passengerService.deleteById(id)){
+            return CommonRespond.succeed("删除成功",true);
+        }
+        return CommonRespond.error(AppExceptionExample.PASSENGER_DELETE_ERROR);
     }
 }
