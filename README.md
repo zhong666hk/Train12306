@@ -572,3 +572,117 @@ public class SpringMVCConfig implements WebMvcConfigurer {
     }
 }
 ```
+## 0.09 passenger开发查询当前会员的接口根据当前的member_id(会员id)使用mybatis自带的分页
+```text
+这个page的原理是
+    先执行
+      SELECT COUNT(*) AS total FROM passenger WHERE (QueryWrapper)
+    再执行
+      SELECT id,member_id,name,id_card,type,create_time,update_time FROM passenger WHERE (QueryWrapper) LIMIT ?,?  
+```
+* 1.配置mybatis的分页插件--拦截器
+```java
+@Configuration
+@MapperScan("com.wbu.train.member.mapper")
+public class MyBatisPlusConfig {
+    /**
+     * 拦截器配置
+     */
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        // 分页插件
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        return interceptor;
+    }
+}
+```
+* 2.使用分页 this.page(Page,QueryWrapper)可以直接使用
+```java
+public Page<Passenger> queryPassengers(PassengerQueryReq req) {
+        // ObjectUtil.isNotNull(req)为空是管理员来查询所有的票
+        QueryWrapper<Passenger> passengerQueryWrapper = new QueryWrapper<>();
+        if (ObjectUtil.isNotNull(req) && ObjectUtil.isNotNull(req.getMemberId())) {
+            passengerQueryWrapper.eq("member_id", req.getMemberId());
+        }
+        Page<Passenger> page = this.page(new Page<>(req.getPage(), req.getSize()), passengerQueryWrapper);
+        return page;
+    }
+```
+* 3.封装请求参数带page(当前页) size(每页的条数)
+  * PageReq是提取到comment当中的
+```java
+@Data
+public class PageReq {
+    @NotNull(message = "页码不能为空")
+    @Min(value = 1,message = "当前页码最小为1")
+    private Integer page;
+    @NotNull(message = "页数不能为空")
+    @Max(value = 100,message = "每页不能超过100条数据")
+    private Integer size;
+}
+```
+```java
+@Data
+public class PassengerQueryReq extends PageReq {
+    private Long memberId;
+}
+```
+## 0.10解决精度丢失的问题
+```text
+产生的原因  
+js的最大位数是16位 JAVA的最大LONG类型是19位
+所以我们要防止精度的丢失
+```
+* 解决方案1 后端全局配置(common)
+```java
+ @Configuration
+ public class JacksonConfig {
+     @Bean
+     public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
+         ObjectMapper objectMapper = builder.createXmlMapper(false).build();
+         SimpleModule simpleModule = new SimpleModule();
+         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+         objectMapper.registerModule(simpleModule);
+         return objectMapper;
+     }
+ }
+```
+* 缺点
+会导致小的Long数据也会转为String。会导致一些类型的转换，有的地方是需要整型的，会导致前端的一些警告
+* 解决方案1 后端 在XXXResp返回封装参数上需要转化的地方加注解
+```java
+@Data
+public class PassengerQueryResp implements Serializable {
+    /**
+     * id
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
+
+    /**
+     * 会员id
+     */
+    private Long memberId;
+
+    /**
+     * 姓名
+     */
+    private String name;
+
+    /**
+     * 身份证
+     */
+    private String idCard;
+
+    /**
+     * 旅客类型|枚举[PassengerTypeEnum]
+     */
+    private String type;
+
+    /**
+     * 新增时间
+     */
+    private Date createTime;
+}
+```

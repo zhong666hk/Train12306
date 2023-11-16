@@ -5,20 +5,16 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.PageHelper;
 import com.wbu.train.common.context.LoginMemberContext;
 import com.wbu.train.common.util.SnowUtil;
 import com.wbu.train.member.domain.Passenger;
 import com.wbu.train.member.mapper.PassengerMapper;
 import com.wbu.train.member.req.PassengerQueryReq;
 import com.wbu.train.member.req.PassengerSaveReq;
-import com.wbu.train.member.resp.PassengerQueryResp;
 import com.wbu.train.member.service.PassengerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author 钟正保

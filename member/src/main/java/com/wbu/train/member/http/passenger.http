@@ -10,7 +10,7 @@ token: {{token}}
   "type":"1"
 }
 ### 查询乘车人信息
-GET http://localhost:8090/api/passenger/query_list?page=3&size=2
+GET http://localhost:8090/api/passenger/query_list?page=1&size=2
 Accept: application/json
 token: {{token}}
 
