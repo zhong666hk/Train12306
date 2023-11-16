@@ -22,6 +22,7 @@ public class PassengerQueryResp implements Serializable {
     /**
      * 会员id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long memberId;
 
     /**

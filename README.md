@@ -650,7 +650,7 @@ js的最大位数是16位 JAVA的最大LONG类型是19位
 ```
 * 缺点
 会导致小的Long数据也会转为String。会导致一些类型的转换，有的地方是需要整型的，会导致前端的一些警告
-* 解决方案1 后端 在XXXResp返回封装参数上需要转化的地方加注解
+* 解决方案2 后端 在XXXResp返回封装参数上需要转化的地方加注解
 ```java
 @Data
 public class PassengerQueryResp implements Serializable {
@@ -663,6 +663,7 @@ public class PassengerQueryResp implements Serializable {
     /**
      * 会员id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long memberId;
 
     /**
@@ -685,4 +686,8 @@ public class PassengerQueryResp implements Serializable {
      */
     private Date createTime;
 }
+```
+* 优点
+```text
+精确解决了精度丢失的问题。可以避免前后端id不一样导致删除、更新功能的实现
 ```
