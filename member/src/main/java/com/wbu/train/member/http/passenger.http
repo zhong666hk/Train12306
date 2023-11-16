@@ -9,3 +9,7 @@ token: {{token}}
   "idCard": "1234567891011",
   "type":"1"
 }
+### 查询乘车人信息
+GET http://localhost:8090/api/passenger/query_list
+Accept: application/json
+token: {{token}}

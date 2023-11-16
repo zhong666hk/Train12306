@@ -3,7 +3,11 @@ package com.wbu.train.member.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wbu.train.member.domain.Passenger;
+import com.wbu.train.member.req.PassengerQueryReq;
 import com.wbu.train.member.req.PassengerSaveReq;
+import com.wbu.train.member.resp.PassengerQueryResp;
+
+import java.util.List;
 
 /**
 * @author 钟正保
@@ -12,4 +16,11 @@ import com.wbu.train.member.req.PassengerSaveReq;
 */
 public interface PassengerService extends IService<Passenger> {
     public boolean savePassenger(PassengerSaveReq req);
+
+    /**
+     * 查询当前登录用户的购票
+     * @param req
+     * @return
+     */
+    public List<PassengerQueryResp> queryPassengers(PassengerQueryReq req);
 }

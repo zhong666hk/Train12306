@@ -2,17 +2,21 @@ package com.wbu.train.member.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.wbu.train.common.context.LoginMemberContext;
 import com.wbu.train.common.util.SnowUtil;
 import com.wbu.train.member.domain.Passenger;
 import com.wbu.train.member.mapper.PassengerMapper;
+import com.wbu.train.member.req.PassengerQueryReq;
 import com.wbu.train.member.req.PassengerSaveReq;
+import com.wbu.train.member.resp.PassengerQueryResp;
 import com.wbu.train.member.service.PassengerService;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
 * @author 钟正保
@@ -35,6 +39,17 @@ public class PassengerServiceImpl extends ServiceImpl<PassengerMapper, Passenger
         passenger.setUpdateTime(new Date());
         passenger.setMemberId(LoginMemberContext.getId());
         return this.save(passenger);
+    }
+
+    @Override
+    public List<PassengerQueryResp> queryPassengers(PassengerQueryReq req) {
+        // ObjectUtil.isNotNull(req)为空是管理员来查询所有的票
+        QueryWrapper<Passenger> passengerQueryWrapper = new QueryWrapper<>();
+        if (ObjectUtil.isNotNull(req) && ObjectUtil.isNotNull(req.getMemberId())){
+            passengerQueryWrapper.eq("member_id",req.getMemberId());
+        }
+        List<Passenger> passengerList = this.list(passengerQueryWrapper);
+        return BeanUtil.copyToList(passengerList, PassengerQueryResp.class);
     }
 }
 

@@ -2,19 +2,21 @@ package com.wbu.train.member.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.wbu.train.common.Aspect.annotation.LogAnnotation;
+import com.wbu.train.common.context.LoginMemberContext;
 import com.wbu.train.common.exception.AppExceptionExample;
 import com.wbu.train.common.respon.CommonRespond;
 import com.wbu.train.common.respon.RespondExample;
+import com.wbu.train.member.req.PassengerQueryReq;
 import com.wbu.train.member.req.PassengerSaveReq;
+import com.wbu.train.member.resp.PassengerQueryResp;
 import com.wbu.train.member.service.PassengerService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/passenger")
@@ -40,5 +42,14 @@ public class PassengerController {
             return CommonRespond.error(AppExceptionExample.PASSENGER_SAVE_ERROR);
         }
         return CommonRespond.error(AppExceptionExample.PASSENGER_SAVE_ERROR);
+    }
+
+
+    @LogAnnotation
+    @GetMapping("/query_list")
+    public CommonRespond<List<PassengerQueryResp>> query_list(@Valid PassengerQueryReq passengerQueryReq) {
+        passengerQueryReq.setMemberId(LoginMemberContext.getId());
+        List<PassengerQueryResp> passengerQueryRespList = passengerService.queryPassengers(passengerQueryReq);
+        return CommonRespond.succeed(passengerQueryRespList);
     }
 }
