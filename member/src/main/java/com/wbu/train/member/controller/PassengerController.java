@@ -1,11 +1,13 @@
 package com.wbu.train.member.controller;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wbu.train.common.Aspect.annotation.LogAnnotation;
 import com.wbu.train.common.context.LoginMemberContext;
 import com.wbu.train.common.exception.AppExceptionExample;
 import com.wbu.train.common.respon.CommonRespond;
 import com.wbu.train.common.respon.RespondExample;
+import com.wbu.train.member.domain.Passenger;
 import com.wbu.train.member.req.PassengerQueryReq;
 import com.wbu.train.member.req.PassengerSaveReq;
 import com.wbu.train.member.resp.PassengerQueryResp;
@@ -47,9 +49,9 @@ public class PassengerController {
 
     @LogAnnotation
     @GetMapping("/query_list")
-    public CommonRespond<List<PassengerQueryResp>> query_list(@Valid PassengerQueryReq passengerQueryReq) {
+    public CommonRespond<Page<Passenger>> query_list(@Valid PassengerQueryReq passengerQueryReq) {
         passengerQueryReq.setMemberId(LoginMemberContext.getId());
-        List<PassengerQueryResp> passengerQueryRespList = passengerService.queryPassengers(passengerQueryReq);
-        return CommonRespond.succeed(passengerQueryRespList);
+        Page<Passenger> page = passengerService.queryPassengers(passengerQueryReq);
+        return CommonRespond.succeed(page);
     }
 }

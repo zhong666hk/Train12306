@@ -1,6 +1,7 @@
 package com.wbu.train.member.service;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wbu.train.member.domain.Passenger;
 import com.wbu.train.member.req.PassengerQueryReq;
@@ -22,5 +23,5 @@ public interface PassengerService extends IService<Passenger> {
      * @param req
      * @return
      */
-    public List<PassengerQueryResp> queryPassengers(PassengerQueryReq req);
+    public Page<Passenger> queryPassengers(PassengerQueryReq req);
 }

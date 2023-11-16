@@ -1,5 +1,6 @@
 package com.wbu.train.member.req;
 
+import com.wbu.train.common.req.PageReq;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -10,6 +11,6 @@ import java.util.Date;
  * @TableName passenger
  */
 @Data
-public class PassengerQueryReq {
+public class PassengerQueryReq extends PageReq {
     private Long memberId;
 }
