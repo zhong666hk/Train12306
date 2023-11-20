@@ -1,0 +1,3 @@
+###测试hello接口
+GET localhost:8090//api/business/hello
+Accept: application/json
