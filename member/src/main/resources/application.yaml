@@ -5,6 +5,12 @@ spring:
     restart:
       enabled: true
       exclude: application.yml,static/**,public/**
+# 分库了
+  datasource:
+    url: jdbc:mysql://localhost:3306/train?characterEncoding=UTF8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    password: zzb200166
+    username: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis-plus:
   configuration:

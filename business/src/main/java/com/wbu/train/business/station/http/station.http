@@ -1,0 +1,12 @@
+GET http://localhost:8003/api/station/query_list?page=1&size=1
+Accept: application/json
+
+### 保存测试
+POST http://localhost:8003/api/station/save
+Content-Type: application/json;charset=utf-8
+
+{
+        "name": "zzbz22",
+        "namePinyin": "zzb",
+        "namePy": "zzb"
+ }

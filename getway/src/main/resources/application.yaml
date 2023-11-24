@@ -28,4 +28,8 @@ spring:
         - id: business
           uri: http://127.0.0.1:8002
           predicates:
-            - Path=/api/business/hello
+            - Path=/api/business/**
+        - id: station
+          uri: http://127.0.0.1:8003
+          predicates:
+            - Path=/api/station/**

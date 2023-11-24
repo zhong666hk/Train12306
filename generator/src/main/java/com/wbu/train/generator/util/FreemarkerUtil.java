@@ -1,4 +1,4 @@
-package com.wbu.train.generator.generator.util;
+package com.wbu.train.generator.util;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class FreemarkerUtil {
 
-    static String ftlPath = "generator/src/main/java/com/jiawa/train/generator/ftl/";
+    static String ftlPath = "generator/src/main/java/com/wbu/train/generator/ftl/";
 
     static Template temp;
 

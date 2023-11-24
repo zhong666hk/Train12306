@@ -1,0 +1,26 @@
+### 测试注册
+POST http://localhost:8090/api/business/admin/register
+Content-Type: application/json;charset=utf-8
+
+{
+  "mobile": "16607211504",
+  "password": "zzb200166"
+}
+
+### 登录测试
+POST http://localhost:8090/api/business/admin/login
+Content-Type: application/json;charset=utf-8
+
+{
+  "mobile": "13345678910",
+  "password": "zzb200166"
+}
+
+> {%
+    client.global.set("token",response.body.data.token)
+%}
+
+### 查询注册
+GET http://localhost:8090/api/business/admin/query_list?page=1&size=10
+Accept: application/json
+token:{{token}}

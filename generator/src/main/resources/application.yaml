@@ -1,0 +1,10 @@
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-value: 0
+      logic-not-delete-value: 1
+      id-type: auto
+      field-strategy: not_empty
+#      table-prefix: xxx_
+    # 自定义全局配置
+    column-format: under_line_to_camel

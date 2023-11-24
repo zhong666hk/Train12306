@@ -12,6 +12,11 @@ public enum AppExceptionExample {
 
     NOT_LOGIN(10007,"未登录"),
     PASSENGER_DELETE_ERROR(10008,"乘客删除异常"),
+    STATION_SAVE_ERROR(10009,"站台保存/修改异常"),
+    STATION_DELETE_ERROR(10010,"乘客删除异常"),
+    ADMIN_HAS_EXIST(10011,"该管理员已经存在"),
+    ADMIN_DELETE_ERROR(10012,"管理员删除异常"),
+    ADMIN_NOT_EXIST(10012,"管理员不存在"),
     ;
 
 

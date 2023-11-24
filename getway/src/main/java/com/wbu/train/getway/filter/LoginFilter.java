@@ -17,16 +17,14 @@ public class LoginFilter implements GlobalFilter , Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
         // 排除不需要拦截的请求
-        if (path.contains("/admin")
-                ||path.contains("/reject")
+        if (path.contains("/reject")
                 ||path.contains("/hello")
                 ||path.contains("/member/sendCode")
-                ||path.contains("/member/register")
-                ||path.contains("/member/login")){
+                ||path.contains("register")
+                ||path.contains("login")){
             LOG.info("不需要登录验证{}",path);
             return chain.filter(exchange);
         }
-
         LOG.info("需要登录验证{}",path);
         // 获取header的token
         String token = exchange.getRequest().getHeaders().getFirst("token");

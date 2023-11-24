@@ -1,0 +1,16 @@
+package com.wbu.train.${doMain}.req;
+
+import com.wbu.train.common.req.PageReq;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+import java.util.Date;
+
+/**
+ * 乘车人
+ * @TableName ${doMain}
+ */
+@Data
+public class ${DoMain}QueryReq extends PageReq {
+
+}
