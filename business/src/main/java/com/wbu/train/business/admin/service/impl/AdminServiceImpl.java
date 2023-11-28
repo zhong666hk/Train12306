@@ -105,6 +105,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin>
         }
         Admin newAdmin = new Admin();
         newAdmin.setMobile(mobile);
+
         newAdmin.setPassword(password);
         newAdmin.setId(SnowUtil.getSnowflakeNextId());
         boolean saveResult = this.save(newAdmin);

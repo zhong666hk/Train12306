@@ -960,3 +960,8 @@ private static Set<String>  getJavaTypes(List<Field> fieldList) {
 *  **3.station为business中的部分**
 station和passenger几乎一样的模块  
 admin和member几乎一样的模块  
+## 0.14、添加train模块
+### 分页的大坑
+当我们用mybatis-plus来分页的时候,会用到Page<Train> page = this.page(new Page<>(req.getPage(), req.getSize()), trainQueryWrapper);
+这样导致我们的一些日期的显示前后端出错。我们要在这个doMain当中也要加上@JsonFormat(pattern = "HH:mm:ss",timezone = "GMT+8")来json日期
+

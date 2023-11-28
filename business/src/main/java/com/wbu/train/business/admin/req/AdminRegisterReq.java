@@ -21,7 +21,7 @@ public class AdminRegisterReq {
     @Pattern(regexp = "^1[3-9]\\d{9}$" ,message = "手机号不符合规范(1[3-9]XXX)")
     private String mobile;
 
-    @NotBlank(message = "手机号不能为空")
+    @NotBlank(message = "密码不能为空")
     @Pattern(regexp = "^[a-zA-Z]\\w{6,15}$" ,message = "以字母开头，长度在6~15之间，只能包含字母、数字和下划线")
     private String password;
 }
