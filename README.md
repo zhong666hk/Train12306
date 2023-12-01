@@ -717,7 +717,7 @@ public class PassengerQueryResp implements Serializable {
 * 更新和新增接口统一服务层
 ```java
 public boolean savePassenger(PassengerSaveReq req) {
-        DateTime date = DateUtil.date(); // hutool的是已经格式化了的
+        DateTime date = DateUtil.dateSecond(); // hutool的是已经格式化了的
         if (ObjectUtil.isNull(req)) {
             return false;
         }
@@ -963,5 +963,37 @@ admin和member几乎一样的模块
 ## 0.14、添加train模块
 ### 分页的大坑
 当我们用mybatis-plus来分页的时候,会用到Page<Train> page = this.page(new Page<>(req.getPage(), req.getSize()), trainQueryWrapper);
-这样导致我们的一些日期的显示前后端出错。我们要在这个doMain当中也要加上@JsonFormat(pattern = "HH:mm:ss",timezone = "GMT+8")来json日期
+这样导致我们的一些日期的显示前后端出错。我们要在这个doMain当中也要加上@JsonFormat(pattern = "HH:mm:ss",timezone = "GMT+8")来json日期  
+## 0.15、添加火车车站(train_station)模块、火车车厢(station_carriage)模块、火车座位模块
+### 当我们的表涉及关键字的时候mybatis-plus会报错
+解决：在bean字段上加@TableField来注解
+```java
+/**
+     * 站序
+     */
+    @TableField(value = "`index`")
+    private Integer index;
+```
+
+
+
+
+
+
+
+
+
+
+
+
+## 小结：
+```txt valid 注解
+ * @NotEmpty 用在集合类上面
+ * @NotBlank 用在String上面 引用类型
+ * @NotNull 用在基本类型上
+```
+```txt ObjectUtil
+  * isEmpty 判断对象是不是没有值
+  * isNull 对象是不是为null
+```
 

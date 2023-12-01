@@ -16,6 +16,8 @@ import com.wbu.train.business.station.service.StationService;
 import com.wbu.train.common.util.SnowUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author 钟正保
  * @description 针对表【station(乘车人)】的数据库操作Service实现
@@ -27,7 +29,7 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station>
 
     @Override
     public boolean saveStation(StationSaveReq req) {
-        DateTime date = DateUtil.date(); // hutool的是已经格式化了的
+        DateTime date = DateUtil.dateSecond(); // hutool的是已经格式化了的
         if (ObjectUtil.isNull(req)) {
             return false;
         }
@@ -65,6 +67,14 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station>
             return false;
         }
         return this.removeById(id);
+    }
+
+    @Override
+    public List<StationQueryResp> queryAll() {
+        QueryWrapper<Station> stationQueryWrapper = new QueryWrapper<>();
+        stationQueryWrapper.orderByAsc("name");
+        List<Station> list = this.list(stationQueryWrapper);
+        return BeanUtil.copyToList(list, StationQueryResp.class);
     }
 }
 

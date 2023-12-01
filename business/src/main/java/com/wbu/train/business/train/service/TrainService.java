@@ -11,15 +11,16 @@ import com.wbu.train.business.train.resp.TrainQueryResp;
 import java.util.List;
 
 /**
-* @author 钟正保
-* @description 针对表【train(乘车人)】的数据库操作Service
-* @createDate 2023-11-14 14:43:47
-*/
+ * @author 钟正保
+ * @description 针对表【train(乘车人)】的数据库操作Service
+ * @createDate 2023-11-14 14:43:47
+ */
 public interface TrainService extends IService<Train> {
     public boolean saveTrain(TrainSaveReq req);
 
     /**
      * 查询当前登录用户的购票
+     *
      * @param req
      * @return
      */
@@ -27,7 +28,10 @@ public interface TrainService extends IService<Train> {
 
     /**
      * 删除train 通过id
+     *
      * @param id
      */
-    public boolean  deleteById(Long id);
+    public boolean deleteById(Long id);
+
+    public List<TrainQueryResp> queryAll();
 }

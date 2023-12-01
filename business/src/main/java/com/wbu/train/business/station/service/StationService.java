@@ -8,17 +8,20 @@ import com.wbu.train.business.station.req.StationQueryReq;
 import com.wbu.train.business.station.req.StationSaveReq;
 import com.wbu.train.business.station.resp.StationQueryResp;
 
+import java.util.List;
+
 
 /**
-* @author 钟正保
-* @description 针对表【station(乘车人)】的数据库操作Service
-* @createDate 2023-11-14 14:43:47
-*/
+ * @author 钟正保
+ * @description 针对表【station(乘车人)】的数据库操作Service
+ * @createDate 2023-11-14 14:43:47
+ */
 public interface StationService extends IService<Station> {
     public boolean saveStation(StationSaveReq req);
 
     /**
      * 查询当前登录用户的购票
+     *
      * @param req
      * @return
      */
@@ -26,7 +29,10 @@ public interface StationService extends IService<Station> {
 
     /**
      * 删除station 通过id
+     *
      * @param id
      */
-    public boolean  deleteById(Long id);
+    public boolean deleteById(Long id);
+
+    public List<StationQueryResp> queryAll();
 }

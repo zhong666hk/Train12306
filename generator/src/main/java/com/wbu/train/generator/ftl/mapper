@@ -2,7 +2,7 @@ package com.wbu.train.${model}.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.wbu.train.${doMain}.domain.Passenger;
+import com.wbu.train.${doMain}.domain.${DoMain};
 
 /**
  * @author 钟正保

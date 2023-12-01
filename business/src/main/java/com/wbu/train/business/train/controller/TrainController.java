@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/business/train")
 public class TrainController {
@@ -58,5 +60,12 @@ public class TrainController {
             return CommonRespond.succeed("删除成功", true);
         }
         return CommonRespond.error(AppExceptionExample.PASSENGER_DELETE_ERROR);
+    }
+
+    @LogAnnotation
+    @GetMapping("/query_all")
+    public CommonRespond<List<TrainQueryResp>> query_all() {
+        List<TrainQueryResp> trainQueryRespList = trainService.queryAll();
+        return CommonRespond.succeed(trainQueryRespList);
     }
 }

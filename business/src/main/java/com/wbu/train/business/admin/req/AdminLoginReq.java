@@ -1,5 +1,6 @@
 package com.wbu.train.business.admin.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -28,7 +29,7 @@ public class AdminLoginReq {
     /**
      * 创建时间
      */
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createTime;
 
     /**

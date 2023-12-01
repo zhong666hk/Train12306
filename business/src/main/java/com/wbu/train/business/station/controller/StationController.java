@@ -1,7 +1,6 @@
 package com.wbu.train.business.station.controller;
 
 import cn.hutool.core.util.ObjectUtil;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wbu.train.business.station.req.StationQueryReq;
 import com.wbu.train.business.station.req.StationSaveReq;
@@ -17,8 +16,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/business/admin/station")
+@RequestMapping("/business/station")
 public class StationController {
     public static final Logger LOG = LoggerFactory.getLogger(StationController.class);
 
@@ -32,11 +33,11 @@ public class StationController {
         if (ObjectUtil.isEmpty(stationSaveReq)) {
             return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
         }
-        try{
+        try {
             if (stationService.saveStation(stationSaveReq)) {
-                return CommonRespond.succeed("添加/修改站台信息成功！！！",true);
+                return CommonRespond.succeed("添加/修改站台信息成功！！！", true);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             LOG.error(e.getMessage());
             return CommonRespond.error(AppExceptionExample.STATION_SAVE_ERROR);
         }
@@ -54,9 +55,16 @@ public class StationController {
     @LogAnnotation
     @DeleteMapping("/delete/{id}")
     public CommonRespond<Boolean> delete(@PathVariable Long id) {
-        if (stationService.deleteById(id)){
-            return CommonRespond.succeed("删除成功",true);
+        if (stationService.deleteById(id)) {
+            return CommonRespond.succeed("删除成功", true);
         }
         return CommonRespond.error(AppExceptionExample.STATION_DELETE_ERROR);
+    }
+
+    @LogAnnotation
+    @GetMapping("/query_all")
+    public CommonRespond<List<StationQueryResp>> query_all() {
+        List<StationQueryResp> stationQueryRespList = stationService.queryAll();
+        return CommonRespond.succeed(stationQueryRespList);
     }
 }

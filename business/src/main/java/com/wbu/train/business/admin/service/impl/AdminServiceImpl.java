@@ -38,7 +38,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin>
 
     @Override
     public boolean saveAdmin(AdminSaveReq req) {
-        DateTime date = DateUtil.date(); // hutool的是已经格式化了的
+        DateTime date = DateUtil.dateSecond(); // hutool的是已经格式化了的
         if (ObjectUtil.isNull(req)) {
             return false;
         }

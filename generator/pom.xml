@@ -72,7 +72,10 @@
                     <!--<configurationFile>src/main/resources/generator-config-member.xml</configurationFile>-->
 <!--                    <configurationFile>src/main/resources/generator-config-passenger.xml</configurationFile>-->
 <!--                    <configurationFile>src/main/resources/generator-config-admin.xml</configurationFile>-->
-                    <configurationFile>src/main/resources/generator-config-train.xml</configurationFile>
+<!--                    <configurationFile>src/main/resources/generator-config-train.xml</configurationFile>-->
+<!--                    <configurationFile>src/main/resources/generator-config-train_carriage.xml</configurationFile>-->
+                    <configurationFile>src/main/resources/generator-config-train_seat.xml</configurationFile>
+<!--                    <configurationFile>src/main/resources/generator-config-train_station.xml</configurationFile>-->
                     <!--                    <configurationFile>src/main/resources/generator-config-business.xml</configurationFile>-->
                     <overwrite>true</overwrite>
                     <verbose>true</verbose>

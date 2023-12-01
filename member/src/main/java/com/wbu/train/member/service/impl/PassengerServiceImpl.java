@@ -30,7 +30,7 @@ public class PassengerServiceImpl extends ServiceImpl<PassengerMapper, Passenger
 
     @Override
     public boolean savePassenger(PassengerSaveReq req) {
-        DateTime date = DateUtil.date(); // hutool的是已经格式化了的
+        DateTime date = DateUtil.dateSecond(); // hutool的是已经格式化了的
         if (ObjectUtil.isNull(req)) {
             return false;
         }
@@ -54,7 +54,7 @@ public class PassengerServiceImpl extends ServiceImpl<PassengerMapper, Passenger
     public Page<PassengerQueryResp> queryPassengers(PassengerQueryReq req) {
         // ObjectUtil.isNotNull(req)为空是管理员来查询所有的票
         QueryWrapper<Passenger> passengerQueryWrapper = new QueryWrapper<>();
-        if (ObjectUtil.isNotNull(req) && ObjectUtil.isNotNull(req.getMemberId())) {
+        if (ObjectUtil.isNotNull(req) && ObjectUtil.isNotEmpty(req.getMemberId())) {
             passengerQueryWrapper.eq("member_id", req.getMemberId());
         }
         //原理会对第一个sql进行拦截 添加limit

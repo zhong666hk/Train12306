@@ -7,7 +7,12 @@ Content-Type: application/json;charset=utf-8
   "password": "zzb200166"
 }
 
-### 查询注册
+### 查询
 GET http://localhost:8090/api/business/train/query_list?page=1&size=10
+Accept: application/json
+token:{{token}}
+
+### 查询注册
+GET http://localhost:8090/api/business/train/query_all
 Accept: application/json
 token:{{token}}

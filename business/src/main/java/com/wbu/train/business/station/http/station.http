@@ -1,8 +1,8 @@
-GET http://localhost:8003/api/station/query_list?page=1&size=1
+GET http://localhost:8090/api/station/query_list?page=1&size=1
 Accept: application/json
 
 ### 保存测试
-POST http://localhost:8003/api/station/save
+POST http://localhost:8090/api/station/save
 Content-Type: application/json;charset=utf-8
 
 {
@@ -10,3 +10,8 @@ Content-Type: application/json;charset=utf-8
         "namePinyin": "zzb",
         "namePy": "zzb"
  }
+
+### 保存测试
+GET http://localhost:8090/api/business/station/query_all
+Accept: application/json
+token:{{token}}
