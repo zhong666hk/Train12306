@@ -1,6 +1,7 @@
 package com.wbu.train.business.train_station.serviceImpl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -13,8 +14,12 @@ import com.wbu.train.business.train_station.req.TrainStationQueryReq;
 import com.wbu.train.business.train_station.req.TrainStationSaveReq;
 import com.wbu.train.business.train_station.resp.TrainStationQueryResp;
 import com.wbu.train.business.train_station.service.TrainStationService;
+import com.wbu.train.common.exception.AppExceptionExample;
+import com.wbu.train.common.exception.MyException;
 import com.wbu.train.common.util.SnowUtil;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author 钟正保
@@ -31,10 +36,22 @@ public class TrainStationServiceImpl extends ServiceImpl<TrainStationMapper, Tra
         if (ObjectUtil.isNull(req)) {
             return false;
         }
+
         // 拷贝类
         TrainStation trainStation = BeanUtil.copyProperties(req, TrainStation.class);
         // 如果是id为空--->说明是添加的操作
         if (ObjectUtil.isNull(trainStation.getId())) {
+            QueryWrapper<TrainStation> trainStationQueryWrapper = new QueryWrapper<>();
+            trainStationQueryWrapper.eq("train_code",req.getTrainCode())
+                    .eq("`index`",req.getIndex())
+                    .or((queryWrapper)->{
+                        queryWrapper.eq("train_code",req.getTrainCode())
+                                .eq("name",req.getName());
+                    });
+            List<TrainStation> list = this.list(trainStationQueryWrapper);
+            if (CollectionUtil.isNotEmpty(list)){
+                throw new MyException(AppExceptionExample.TRAIN_STATION_HAS_EXIST);
+            }
             trainStation.setId(SnowUtil.getSnowflakeNextId());
             trainStation.setCreateTime(date);
             trainStation.setUpdateTime(date);

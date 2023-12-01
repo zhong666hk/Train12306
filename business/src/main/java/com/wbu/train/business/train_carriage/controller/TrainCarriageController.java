@@ -32,14 +32,11 @@ public class TrainCarriageController {
         if (ObjectUtil.isEmpty(trainCarriageSaveReq)) {
             return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
         }
-        try{
-            if (trainCarriageService.saveTrainCarriage(trainCarriageSaveReq)) {
-                return CommonRespond.succeed("乘客添加或修改成功！！！",true);
-            }
-        }catch (Exception e){
-            LOG.error(e.getMessage());
-            return CommonRespond.error(AppExceptionExample.PASSENGER_SAVE_ERROR);
+
+        if (trainCarriageService.saveTrainCarriage(trainCarriageSaveReq)) {
+            return CommonRespond.succeed("乘客添加或修改成功！！！",true);
         }
+
         return CommonRespond.error(AppExceptionExample.PASSENGER_SAVE_ERROR);
     }
 

@@ -9,9 +9,11 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wbu.train.business.train.controller.TrainController;
 import com.wbu.train.business.train_carriage.domain.TrainCarriage;
 import com.wbu.train.business.train_carriage.service.TrainCarriageService;
 import com.wbu.train.common.enums.SeatColEnum;
+import com.wbu.train.common.exception.MyException;
 import com.wbu.train.common.util.SnowUtil;
 import com.wbu.train.business.train_seat.domain.TrainSeat;
 import com.wbu.train.business.train_seat.mapper.TrainSeatMapper;
@@ -19,6 +21,8 @@ import com.wbu.train.business.train_seat.req.TrainSeatQueryReq;
 import com.wbu.train.business.train_seat.req.TrainSeatSaveReq;
 import com.wbu.train.business.train_seat.resp.TrainSeatQueryResp;
 import com.wbu.train.business.train_seat.service.TrainSeatService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +38,7 @@ import java.util.List;
 @Service
 public class TrainSeatServiceImpl extends ServiceImpl<TrainSeatMapper, TrainSeat>
         implements TrainSeatService {
+    public  final Logger LOG = LoggerFactory.getLogger(TrainSeatServiceImpl.class);
     @Autowired
     private TrainCarriageService trainCarriageService;
 
@@ -89,7 +94,10 @@ public class TrainSeatServiceImpl extends ServiceImpl<TrainSeatMapper, TrainSeat
         // 1. 防止一辆火车重复生成 --->先删除再生成 / 先查看数据库是否存在在生成
         QueryWrapper<TrainSeat> trainSeatQueryWrapper = new QueryWrapper<>();
         trainSeatQueryWrapper.eq("train_code",trainCode);
-        this.remove(trainSeatQueryWrapper);
+        boolean remove = this.remove(trainSeatQueryWrapper);
+        if (remove){
+            LOG.info("已清空{}列车的座位信息",trainCode);
+        }
         // 定义时间
         DateTime dateTime = DateUtil.dateSecond();
         //定义皮插入的列表
@@ -97,7 +105,8 @@ public class TrainSeatServiceImpl extends ServiceImpl<TrainSeatMapper, TrainSeat
         // 查询当前车次所有的车厢,根据车厢类型-->1等座 4列 2等座 5列
         List<TrainCarriage> trainCarriageList = trainCarriageService.selectByTrainCode(trainCode);
         if (CollectionUtil.isEmpty(trainCarriageList)){
-            return false;
+            // 抛出异常
+            throw new MyException(40000,"请先完善"+trainCode+"列车的车厢信息");
         }
         // 循环生成每个车厢的座位
         for (TrainCarriage trainCarriage : trainCarriageList) {

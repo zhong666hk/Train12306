@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/business/train")
 public class TrainController {
-    public static final Logger LOG = LoggerFactory.getLogger(TrainController.class);
+    public  final Logger LOG = LoggerFactory.getLogger(TrainController.class);
 
     @Autowired
     private TrainService trainService;
@@ -33,14 +33,11 @@ public class TrainController {
         if (ObjectUtil.isEmpty(trainSaveReq)) {
             return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
         }
-        try {
-            if (trainService.saveTrain(trainSaveReq)) {
-                return CommonRespond.succeed("车次添加或修改成功！！！", true);
-            }
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            return CommonRespond.error(AppExceptionExample.PASSENGER_SAVE_ERROR);
+
+        if (trainService.saveTrain(trainSaveReq)) {
+            return CommonRespond.succeed("车次添加或修改成功！！！", true);
         }
+
         return CommonRespond.error(AppExceptionExample.PASSENGER_SAVE_ERROR);
     }
 
@@ -70,9 +67,9 @@ public class TrainController {
     }
 
     @LogAnnotation
-    @GetMapping("/gen/{trainCode}")
-    public CommonRespond<Boolean> genSeat(@PathVariable String trainCode) {
-        if (trainService.genSeatByTrainCode(trainCode)) {
+    @GetMapping("/gen/{code}")
+    public CommonRespond<Boolean> genSeat(@PathVariable String code) {
+        if (trainService.genSeatByTrainCode(code)) {
             return CommonRespond.succeed("座位自动生成成功", true);
         }
         return CommonRespond.error(AppExceptionExample.TRAIN_SEAT_GEN_ERROR);

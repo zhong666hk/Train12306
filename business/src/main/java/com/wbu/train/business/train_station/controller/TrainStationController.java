@@ -31,14 +31,11 @@ public class TrainStationController {
         if (ObjectUtil.isEmpty(trainStationSaveReq)) {
             return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
         }
-        try{
-            if (trainStationService.saveTrainStation(trainStationSaveReq)) {
-                return CommonRespond.succeed("乘客添加或修改成功！！！",true);
-            }
-        }catch (Exception e){
-            LOG.error(e.getMessage());
-            return CommonRespond.error(AppExceptionExample.PASSENGER_SAVE_ERROR);
+
+        if (trainStationService.saveTrainStation(trainStationSaveReq)) {
+            return CommonRespond.succeed("火车车站添加或修改成功！！！",true);
         }
+
         return CommonRespond.error(AppExceptionExample.PASSENGER_SAVE_ERROR);
     }
 

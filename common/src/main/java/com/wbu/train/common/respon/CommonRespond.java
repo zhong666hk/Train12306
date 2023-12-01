@@ -29,6 +29,7 @@ public class CommonRespond <T>{
         this(code,null,data);
     }
 
+
     public static <T>CommonRespond<T> error(AppExceptionExample appExceptionExample){
         return new CommonRespond<>(appExceptionExample.getCode(), appExceptionExample.getMessage());
     }
@@ -46,4 +47,5 @@ public class CommonRespond <T>{
     public static <T>CommonRespond<T> succeed(T data){
         return new CommonRespond<>(200,null,data);
     }
+
 }

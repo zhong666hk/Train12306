@@ -1,12 +1,16 @@
 package com.wbu.train.business.train_carriage.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wbu.train.common.enums.SeatColEnum;
+import com.wbu.train.common.exception.AppExceptionExample;
+import com.wbu.train.common.exception.MyException;
 import com.wbu.train.common.util.SnowUtil;
 import com.wbu.train.business.train_carriage.domain.TrainCarriage;
 import com.wbu.train.business.train_carriage.mapper.TrainCarriageMapper;
@@ -33,10 +37,23 @@ public class TrainCarriageServiceImpl extends ServiceImpl<TrainCarriageMapper, T
         if (ObjectUtil.isNull(req)) {
             return false;
         }
+
+        // 计算座位数和列数
+        List<SeatColEnum> colsByType = SeatColEnum.getColsByType(req.getSeatType());
+        req.setColCount(colsByType.size());
+        req.setSeatCount(colsByType.size()*req.getRowCount());
+
         // 拷贝类
         TrainCarriage trainCarriage = BeanUtil.copyProperties(req, TrainCarriage.class);
         // 如果是id为空--->说明是添加的操作
         if (ObjectUtil.isNull(trainCarriage.getId())){
+            QueryWrapper<TrainCarriage> trainCarriageQueryWrapper = new QueryWrapper<>();
+            trainCarriageQueryWrapper.eq("train_code",req.getTrainCode())
+                    .eq("`index`",req.getIndex());
+            List<TrainCarriage> trainCarriageList = this.list(trainCarriageQueryWrapper);
+            if (CollectionUtil.isNotEmpty(trainCarriageList)){
+                throw new MyException(AppExceptionExample.TRAIN_CARRIAGE_HAS_EXIST);
+            }
             trainCarriage.setId(SnowUtil.getSnowflakeNextId());
             trainCarriage.setCreateTime(date);
             trainCarriage.setUpdateTime(date);

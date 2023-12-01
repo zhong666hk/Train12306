@@ -1,4 +1,4 @@
-package com.wbu.train.business.train.enums;
+package com.wbu.train.common.enums;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

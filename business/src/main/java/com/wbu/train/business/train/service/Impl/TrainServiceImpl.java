@@ -1,6 +1,7 @@
 package com.wbu.train.business.train.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -14,6 +15,8 @@ import com.wbu.train.business.train.req.TrainSaveReq;
 import com.wbu.train.business.train.resp.TrainQueryResp;
 import com.wbu.train.business.train.service.TrainService;
 import com.wbu.train.business.train_seat.service.TrainSeatService;
+import com.wbu.train.common.exception.AppExceptionExample;
+import com.wbu.train.common.exception.MyException;
 import com.wbu.train.common.util.SnowUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,10 +41,18 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train>
         if (ObjectUtil.isNull(req)) {
             return false;
         }
+
         // 拷贝类
         Train train = BeanUtil.copyProperties(req, Train.class);
         // 如果是id为空--->说明是添加的操作
         if (ObjectUtil.isNull(train.getId())) {
+            // 唯一键校验
+            QueryWrapper<Train> trainQueryWrapper = new QueryWrapper<>();
+            trainQueryWrapper.eq("code",req.getCode());
+            List<Train> list = this.list(trainQueryWrapper);
+            if (CollectionUtil.isNotEmpty(list)){
+                throw new MyException(AppExceptionExample.TRAIN_CODE_HAS_EXIST);
+            }
             train.setId(SnowUtil.getSnowflakeNextId());
             train.setCreateTime(date);
             train.setUpdateTime(date);
@@ -82,8 +93,8 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train>
     }
 
     @Override
-    public boolean genSeatByTrainCode(String trainCode) {
-        return trainSeatService.genTrainSeat(trainCode);
+    public boolean genSeatByTrainCode(String code) {
+        return trainSeatService.genTrainSeat(code);
     }
 }
 

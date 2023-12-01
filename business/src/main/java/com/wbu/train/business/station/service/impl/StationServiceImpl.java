@@ -1,6 +1,7 @@
 package com.wbu.train.business.station.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -13,6 +14,8 @@ import com.wbu.train.business.station.req.StationQueryReq;
 import com.wbu.train.business.station.req.StationSaveReq;
 import com.wbu.train.business.station.resp.StationQueryResp;
 import com.wbu.train.business.station.service.StationService;
+import com.wbu.train.common.exception.AppExceptionExample;
+import com.wbu.train.common.exception.MyException;
 import com.wbu.train.common.util.SnowUtil;
 import org.springframework.stereotype.Service;
 
@@ -33,10 +36,19 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station>
         if (ObjectUtil.isNull(req)) {
             return false;
         }
+
         // 拷贝类
         Station station = BeanUtil.copyProperties(req, Station.class);
         // 如果是id为空--->说明是添加的操作
         if (ObjectUtil.isNull(station.getId())) {
+            // 保存和修改 之前查看唯一键是否合法
+            QueryWrapper<Station> stationQueryWrapper = new QueryWrapper<>();
+            stationQueryWrapper.eq("name",req.getName());
+            List<Station> list = this.list(stationQueryWrapper);
+            // 唯一键冲突
+            if (CollectionUtil.isNotEmpty(list)) {
+                throw new MyException(AppExceptionExample.STATION_HAS_EXIST);
+            }
             station.setId(SnowUtil.getSnowflakeNextId());
             station.setCreateTime(date);
             station.setUpdateTime(date);

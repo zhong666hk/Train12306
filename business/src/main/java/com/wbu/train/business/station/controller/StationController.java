@@ -33,13 +33,9 @@ public class StationController {
         if (ObjectUtil.isEmpty(stationSaveReq)) {
             return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
         }
-        try {
-            if (stationService.saveStation(stationSaveReq)) {
-                return CommonRespond.succeed("添加/修改站台信息成功！！！", true);
-            }
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            return CommonRespond.error(AppExceptionExample.STATION_SAVE_ERROR);
+
+        if (stationService.saveStation(stationSaveReq)) {
+            return CommonRespond.succeed("添加/修改站台信息成功！！！", true);
         }
         return CommonRespond.error(AppExceptionExample.STATION_SAVE_ERROR);
     }

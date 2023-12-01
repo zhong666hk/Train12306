@@ -35,5 +35,5 @@ public interface TrainService extends IService<Train> {
 
     public List<TrainQueryResp> queryAll();
 
-    public boolean genSeatByTrainCode(String trainCode);
+    public boolean genSeatByTrainCode(String code);
 }

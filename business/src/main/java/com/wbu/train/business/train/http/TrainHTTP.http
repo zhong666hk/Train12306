@@ -18,6 +18,6 @@ Accept: application/json
 token:{{token}}
 
 ###自动生成座位测试
-GET http://localhost:8090/api/business/train/gen/G1
+GET http://localhost:8090/api/business/train/gen/G2
 Accept: application/json
 token:{{token}}
