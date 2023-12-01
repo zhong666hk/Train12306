@@ -17,6 +17,8 @@ public enum AppExceptionExample {
     ADMIN_HAS_EXIST(10011,"该管理员已经存在"),
     ADMIN_DELETE_ERROR(10012,"管理员删除异常"),
     ADMIN_NOT_EXIST(10012,"管理员不存在"),
+    TRAIN_DELETE_ERROR(10013,"火车删除异常"),
+    TRAIN_SEAT_GEN_ERROR(10014,"火车座位自动生成异常"),
     ;
 
 

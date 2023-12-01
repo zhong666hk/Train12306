@@ -996,4 +996,10 @@ admin和member几乎一样的模块
   * isEmpty 判断对象是不是没有值
   * isNull 对象是不是为null
 ```
+```txt mybatis-plus
+ * mybatis-plus的remove
+ *当数据库不存在数据 删除条数为0 返回false
+ * 当数据库存在数据 删除条数>0 返回true
+         
+```
 

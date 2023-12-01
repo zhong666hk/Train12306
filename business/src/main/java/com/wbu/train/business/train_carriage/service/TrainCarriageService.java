@@ -8,6 +8,8 @@ import com.wbu.train.business.train_carriage.req.TrainCarriageQueryReq;
 import com.wbu.train.business.train_carriage.req.TrainCarriageSaveReq;
 import com.wbu.train.business.train_carriage.resp.TrainCarriageQueryResp;
 
+import java.util.List;
+
 /**
 * @author 钟正保
 * @description 针对表【trainCarriage(乘车人)】的数据库操作Service
@@ -28,4 +30,9 @@ public interface TrainCarriageService extends IService<TrainCarriage> {
      * @param id
      */
     public boolean  deleteById(Long id);
+
+    /**
+     * 查询当前车次的所有车厢数据
+     */
+    public List<TrainCarriage> selectByTrainCode(String trainCode);
 }

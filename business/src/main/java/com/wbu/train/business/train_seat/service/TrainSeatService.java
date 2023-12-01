@@ -28,4 +28,9 @@ public interface TrainSeatService extends IService<TrainSeat> {
      * @param id
      */
     public boolean  deleteById(Long id);
+
+    /**
+     * 自动生成座位
+     */
+    public boolean genTrainSeat(String trainCode);
 }

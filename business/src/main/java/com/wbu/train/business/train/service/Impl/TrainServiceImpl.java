@@ -13,7 +13,9 @@ import com.wbu.train.business.train.req.TrainQueryReq;
 import com.wbu.train.business.train.req.TrainSaveReq;
 import com.wbu.train.business.train.resp.TrainQueryResp;
 import com.wbu.train.business.train.service.TrainService;
+import com.wbu.train.business.train_seat.service.TrainSeatService;
 import com.wbu.train.common.util.SnowUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +28,9 @@ import java.util.List;
 @Service
 public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train>
         implements TrainService {
+
+    @Autowired
+    private TrainSeatService trainSeatService;
 
     @Override
     public boolean saveTrain(TrainSaveReq req) {
@@ -74,6 +79,11 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train>
         trainQueryWrapper.orderByAsc("code");
         List<Train> list = this.list(trainQueryWrapper);
         return BeanUtil.copyToList(list, TrainQueryResp.class);
+    }
+
+    @Override
+    public boolean genSeatByTrainCode(String trainCode) {
+        return trainSeatService.genTrainSeat(trainCode);
     }
 }
 

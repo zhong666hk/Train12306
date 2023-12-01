@@ -34,4 +34,6 @@ public interface TrainService extends IService<Train> {
     public boolean deleteById(Long id);
 
     public List<TrainQueryResp> queryAll();
+
+    public boolean genSeatByTrainCode(String trainCode);
 }

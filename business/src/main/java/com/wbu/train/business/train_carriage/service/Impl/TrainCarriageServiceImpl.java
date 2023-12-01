@@ -16,6 +16,8 @@ import com.wbu.train.business.train_carriage.resp.TrainCarriageQueryResp;
 import com.wbu.train.business.train_carriage.service.TrainCarriageService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author 钟正保
  * @description 针对表【trainCarriage(乘车人)】的数据库操作Service实现
@@ -68,6 +70,14 @@ public class TrainCarriageServiceImpl extends ServiceImpl<TrainCarriageMapper, T
             return false;
         }
         return this.removeById(id);
+    }
+
+    @Override
+    public List<TrainCarriage> selectByTrainCode(String trainCode) {
+        QueryWrapper<TrainCarriage> trainCarriageQueryWrapper = new QueryWrapper<>();
+        trainCarriageQueryWrapper.eq("train_code",trainCode)
+                .orderByAsc("`index`");
+        return this.list(trainCarriageQueryWrapper);
     }
 }
 

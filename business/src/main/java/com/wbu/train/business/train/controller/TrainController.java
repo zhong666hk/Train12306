@@ -59,7 +59,7 @@ public class TrainController {
         if (trainService.deleteById(id)) {
             return CommonRespond.succeed("删除成功", true);
         }
-        return CommonRespond.error(AppExceptionExample.PASSENGER_DELETE_ERROR);
+        return CommonRespond.error(AppExceptionExample.TRAIN_DELETE_ERROR);
     }
 
     @LogAnnotation
@@ -67,5 +67,14 @@ public class TrainController {
     public CommonRespond<List<TrainQueryResp>> query_all() {
         List<TrainQueryResp> trainQueryRespList = trainService.queryAll();
         return CommonRespond.succeed(trainQueryRespList);
+    }
+
+    @LogAnnotation
+    @GetMapping("/gen/{trainCode}")
+    public CommonRespond<Boolean> genSeat(@PathVariable String trainCode) {
+        if (trainService.genSeatByTrainCode(trainCode)) {
+            return CommonRespond.succeed("座位自动生成成功", true);
+        }
+        return CommonRespond.error(AppExceptionExample.TRAIN_SEAT_GEN_ERROR);
     }
 }

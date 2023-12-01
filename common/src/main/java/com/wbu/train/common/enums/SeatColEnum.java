@@ -39,11 +39,11 @@ public enum SeatColEnum {
         this.key = key;
     }
 
-    public void setDesc(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
-    public String getDesc() {
+    public String getValue() {
         return value;
     }
 

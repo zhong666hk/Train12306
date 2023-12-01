@@ -16,3 +16,8 @@ token:{{token}}
 GET http://localhost:8090/api/business/train/query_all
 Accept: application/json
 token:{{token}}
+
+###自动生成座位测试
+GET http://localhost:8090/api/business/train/gen/G1
+Accept: application/json
+token:{{token}}
