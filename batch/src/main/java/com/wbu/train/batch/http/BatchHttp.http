@@ -1,0 +1,3 @@
+### 模块hello
+GET http://localhost:8090/api/batch/hello
+Accept: application/json

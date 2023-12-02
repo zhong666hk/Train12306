@@ -974,7 +974,76 @@ admin和member几乎一样的模块
     @TableField(value = "`index`")
     private Integer index;
 ```
+## 0.18、添加batch(定时任务模块) 使用quartz框架来做
+```java springBoot自带的定时任务
+@Component
+@EnableScheduling
+public class SpringBootTestJo {
 
+  @Scheduled(cron = "0/5 * * * * *")
+  private void print(){
+    System.out.println("SpringBootTestJo");
+  }
+}
+```
+```java 使用quartz框架来做定时任务
+
+/**
+ * 1.创建一个类实现Job接口
+ */
+public class QuartZJobTest implements Job {
+//    定时任务执行的方法
+
+  @Override
+  public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    System.out.println("quartz定时任务");
+  }
+}
+
+@Configuration
+public class QuartzConfig {
+    /**
+     * 2. 声明定时任务
+     * @return
+     */
+    @Bean
+    public JobDetail jobDetail(){
+        return JobBuilder.newJob(QuartZJobTest.class)
+                // 1.命名 2.分组
+                .withIdentity("TestJob","test")
+                // 持久存储
+                .storeDurably()
+                .build();
+    }
+    /**
+     * 3.声明触发器，生么时候触发任务
+     */
+    @Bean
+    public Trigger tigger(){
+        return TriggerBuilder.newTrigger()
+                // 触发器触发的任务forJob(name) name=TestJob
+                .forJob(jobDetail())
+                .withIdentity("trigger","test")
+                .startNow()
+                .withSchedule(CronScheduleBuilder.cronSchedule("*/2 * * * * ?"))
+                .build();
+        }
+
+}
+
+/**
+ * 4.启动类 开启定时任务 @EnableScheduling 
+ */
+@SpringBootApplication
+@ComponentScan("com.wbu.train") //扫描公共模块
+@MapperScan("com.wbu.train.batch.mapper")
+@EnableScheduling // 开启定时任务
+public class BatchApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(BatchApplication.class,args);
+  }
+}
+```
 
 
 

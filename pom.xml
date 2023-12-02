@@ -19,6 +19,7 @@
         <module>getway</module>
         <module>generator</module>
         <module>business</module>
+        <module>batch</module>
     </modules>
     <properties>
         <java.version>17</java.version>
