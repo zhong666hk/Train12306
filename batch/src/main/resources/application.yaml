@@ -10,6 +10,15 @@ spring:
     password: zzb200166
     username: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+    properties:
+      org.quartz.scheduler.instanceName: MyClusteredScheduler
+      org.quartz.scheduler.instanceId: test
+      org.quartz.jobStore.isClustered: true
+
 
 mybatis-plus:
   configuration:

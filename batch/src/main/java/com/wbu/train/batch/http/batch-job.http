@@ -1,0 +1,65 @@
+POST http://localhost:8003/api/batch/job/add
+Content-Type: application/json
+
+{
+  "name": "com.wbu.train.batch.job.QuartZJobTest",
+  "jobGroupName": "default",
+  "cronExpression": "*/2 * * * * ?",
+  "desc": "test job"
+}
+
+###
+
+GET http://localhost:8003/api/batch/job/query
+
+###
+
+POST http://localhost:8003/api/batch/job/pause
+Content-Type: application/json
+
+{
+  "name": "com.wbu.train.batch.job.QuartZJobTest",
+  "jobGroupName": "default"
+}
+
+###
+
+POST http://localhost:8003/api/batch/job/resume
+Content-Type: application/json
+
+{
+  "name": "com.wbu.train.batch.job.QuartZJobTest",
+  "jobGroupName": "default"
+}
+
+###
+
+POST http://localhost:8003/api/batch/job/reschedule
+Content-Type: application/json
+
+{
+"name": "com.wbu.train.batch.job.QuartZJobTest",
+"jobGroupName": "default",
+"cronExpression": "*/5 * * * * ?",
+"desc": "test job"
+}
+
+###
+
+POST http://localhost:8003/api/batch/job/delete
+Content-Type: application/json
+
+{
+"name": "com.wbu.train.batch.job.QuartZJobTest",
+"jobGroupName": "default"
+}
+
+###
+
+POST http://localhost:8003/api/batch/job/run
+Content-Type: application/json
+
+{
+"name": "com.wbu.train.batch.job.QuartZJobTest",
+"jobGroupName": "default"
+}

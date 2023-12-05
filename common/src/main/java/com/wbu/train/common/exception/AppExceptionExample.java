@@ -23,6 +23,14 @@ public enum AppExceptionExample {
     TRAIN_CODE_HAS_EXIST(10016,"火车编号已经存在"),
     TRAIN_CARRIAGE_HAS_EXIST(10017,"火车车厢已经存在"),
     TRAIN_STATION_HAS_EXIST(10018,"火车车站已经存在"),
+    CREATE_TASK_ERROR(10019,"任务创建失败"),
+    STOP_TASK_ERROR(10020,"暂停定时任务失败:调度异常"),
+    RESTART_TASK_ERROR(10021,"重启定时任务失败"),
+    RESCHEDULE_TASK_ERROR(10022,"更新定时任务失败"),
+    DELETE_TASK_ERROR(10023,"删除定时任务失败:调度异常"),
+    QUERY_TASK_ERROR(10024,"查看定时任务失败:调度异常"),
+
+
     ;
 
 

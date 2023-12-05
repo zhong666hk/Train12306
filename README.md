@@ -296,7 +296,7 @@ public enum AppExceptionExample {
 ``` ```
 * 验证码接口的开发
 ```java
-@LogAnnotation
+    @LogAnnotation
     @PostMapping("/sendCode")
     public CommonRespond<String> sendCode(@Valid MemberSendCodeReq memberSendCodeReq) {
         if (ObjectUtil.isEmpty(memberSendCodeReq)) {
