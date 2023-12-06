@@ -1,12 +1,16 @@
 package com.wbu.train.business.daily_train.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wbu.train.business.train.domain.Train;
+import com.wbu.train.common.exception.AppExceptionExample;
+import com.wbu.train.common.exception.MyException;
 import com.wbu.train.common.util.SnowUtil;
 import com.wbu.train.business.daily_train.domain.DailyTrain;
 import com.wbu.train.business.daily_train.mapper.DailyTrainMapper;
@@ -15,6 +19,8 @@ import com.wbu.train.business.daily_train.req.DailyTrainSaveReq;
 import com.wbu.train.business.daily_train.resp.DailyTrainQueryResp;
 import com.wbu.train.business.daily_train.service.DailyTrainService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author 钟正保
@@ -35,6 +41,14 @@ public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTr
         DailyTrain dailyTrain = BeanUtil.copyProperties(req, DailyTrain.class);
         // 如果是id为空--->说明是添加的操作
         if (ObjectUtil.isNull(dailyTrain.getId())){
+            // 唯一键校验
+            QueryWrapper<DailyTrain> dailyTrainQueryWrapper = new QueryWrapper<>();
+            dailyTrainQueryWrapper.eq("code",req.getCode());
+            dailyTrainQueryWrapper.eq("date",req.getDate());
+            List<DailyTrain> list = this.list(dailyTrainQueryWrapper);
+            if (CollectionUtil.isNotEmpty(list)){
+                throw new MyException(AppExceptionExample.DAILY_TRAIN_CODE_HAS_EXIST);
+            }
             dailyTrain.setId(SnowUtil.getSnowflakeNextId());
             dailyTrain.setCreateTime(date);
             dailyTrain.setUpdateTime(date);

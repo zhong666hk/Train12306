@@ -29,8 +29,8 @@ public enum AppExceptionExample {
     RESCHEDULE_TASK_ERROR(10022,"更新定时任务失败"),
     DELETE_TASK_ERROR(10023,"删除定时任务失败:调度异常"),
     QUERY_TASK_ERROR(10024,"查看定时任务失败:调度异常"),
-
-
+    DAILY_TRAIN_STATION_HAS_EXIST(10025,"今日火车车站已经存在"),
+    DAILY_TRAIN_CODE_HAS_EXIST(10026,"今日火车编号已经存在"),
     ;
 
 

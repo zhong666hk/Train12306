@@ -12,7 +12,7 @@ import java.util.Date;
  */
 @Data
 public class DailyTrainQueryReq extends PageReq {
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd") //这个是格式化 前端传来的sting->date的
     private Date date;
     private String code;
 }

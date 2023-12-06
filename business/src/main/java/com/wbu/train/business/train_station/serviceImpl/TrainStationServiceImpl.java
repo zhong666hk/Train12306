@@ -52,6 +52,7 @@ public class TrainStationServiceImpl extends ServiceImpl<TrainStationMapper, Tra
             if (CollectionUtil.isNotEmpty(list)){
                 throw new MyException(AppExceptionExample.TRAIN_STATION_HAS_EXIST);
             }
+
             trainStation.setId(SnowUtil.getSnowflakeNextId());
             trainStation.setCreateTime(date);
             trainStation.setUpdateTime(date);
@@ -70,6 +71,7 @@ public class TrainStationServiceImpl extends ServiceImpl<TrainStationMapper, Tra
         if (ObjectUtil.isNotEmpty(req.getTrainCode())){
             trainStationQueryWrapper.eq("train_code",req.getTrainCode());
         }
+        trainStationQueryWrapper.orderByDesc("date");
         trainStationQueryWrapper.orderByAsc("train_code","`index`");
         //原理会对第一个sql进行拦截 添加limit
 //        PageHelper.startPage( req.getPage(),req.getSize());

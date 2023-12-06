@@ -1075,4 +1075,8 @@ public class BatchApplication {
  * 当数据库存在数据 删除条数>0 返回true
          
 ```
+```txt     @JsonFormat 和@DateTimeFormat的区别
+* @JsonFormat针对的是 post请求
+* @DateTimeFormat 针对的是Get请求
+```
 

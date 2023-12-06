@@ -1,22 +1,23 @@
-package com.wbu.train.business.daily_train.domain;
+package com.wbu.train.business.daily_train_station.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
- * 每日车次
- * @TableName daily_train
+ * 每日车站
+ * @TableName daily_train_station
  */
-@TableName(value ="daily_train")
+@TableName(value ="daily_train_station")
 @Data
-public class DailyTrain implements Serializable {
+public class DailyTrainStation implements Serializable {
     /**
      * id
      */
@@ -32,59 +33,60 @@ public class DailyTrain implements Serializable {
     /**
      * 车次编号
      */
-    private String code;
+    private String trainCode;
 
     /**
-     * 车次类型|枚举[TrainTypeEnum]
+     * 站序
      */
-    private String type;
+    @TableField("`index`")
+    private Integer index;
 
     /**
-     * 始发站
+     * 站名
      */
-    private String start;
+    private String name;
 
     /**
-     * 始发站拼音
+     * 站名拼音
      */
-    private String startPinyin;
+    private String namePinyin;
 
     /**
-     * 出发时间
-     */
-    @JsonFormat(pattern = "HH:mm:ss",timezone = "GMT+8")
-
-    private Date startTime;
-
-    /**
-     * 终点站
-     */
-    private String end;
-
-    /**
-     * 终点站拼音
-     */
-    private String endPinyin;
-
-    /**
-     * 到站时间
+     * 进站时间
      */
     @JsonFormat(pattern = "HH:mm:ss",timezone = "GMT+8")
 
-    private Date endTime;
+    private Date inTime;
+
+    /**
+     * 出站时间
+     */
+    @JsonFormat(pattern = "HH:mm:ss",timezone = "GMT+8")
+
+    private Date outTime;
+
+    /**
+     * 停站时长
+     */
+    @JsonFormat(pattern = "HH:mm:ss",timezone = "GMT+8")
+
+    private Date stopTime;
+
+    /**
+     * 里程（公里）|从上一站到本站的距离
+     */
+    private BigDecimal km;
 
     /**
      * 新增时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-
     private Date createTime;
 
     /**
      * 修改时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-
     private Date updateTime;
 
     @TableField(exist = false)
@@ -101,17 +103,17 @@ public class DailyTrain implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        DailyTrain other = (DailyTrain) that;
+        DailyTrainStation other = (DailyTrainStation) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getDate() == null ? other.getDate() == null : this.getDate().equals(other.getDate()))
-            && (this.getCode() == null ? other.getCode() == null : this.getCode().equals(other.getCode()))
-            && (this.getType() == null ? other.getType() == null : this.getType().equals(other.getType()))
-            && (this.getStart() == null ? other.getStart() == null : this.getStart().equals(other.getStart()))
-            && (this.getStartPinyin() == null ? other.getStartPinyin() == null : this.getStartPinyin().equals(other.getStartPinyin()))
-            && (this.getStartTime() == null ? other.getStartTime() == null : this.getStartTime().equals(other.getStartTime()))
-            && (this.getEnd() == null ? other.getEnd() == null : this.getEnd().equals(other.getEnd()))
-            && (this.getEndPinyin() == null ? other.getEndPinyin() == null : this.getEndPinyin().equals(other.getEndPinyin()))
-            && (this.getEndTime() == null ? other.getEndTime() == null : this.getEndTime().equals(other.getEndTime()))
+            && (this.getTrainCode() == null ? other.getTrainCode() == null : this.getTrainCode().equals(other.getTrainCode()))
+            && (this.getIndex() == null ? other.getIndex() == null : this.getIndex().equals(other.getIndex()))
+            && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
+            && (this.getNamePinyin() == null ? other.getNamePinyin() == null : this.getNamePinyin().equals(other.getNamePinyin()))
+            && (this.getInTime() == null ? other.getInTime() == null : this.getInTime().equals(other.getInTime()))
+            && (this.getOutTime() == null ? other.getOutTime() == null : this.getOutTime().equals(other.getOutTime()))
+            && (this.getStopTime() == null ? other.getStopTime() == null : this.getStopTime().equals(other.getStopTime()))
+            && (this.getKm() == null ? other.getKm() == null : this.getKm().equals(other.getKm()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
     }
@@ -122,14 +124,14 @@ public class DailyTrain implements Serializable {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getDate() == null) ? 0 : getDate().hashCode());
-        result = prime * result + ((getCode() == null) ? 0 : getCode().hashCode());
-        result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
-        result = prime * result + ((getStart() == null) ? 0 : getStart().hashCode());
-        result = prime * result + ((getStartPinyin() == null) ? 0 : getStartPinyin().hashCode());
-        result = prime * result + ((getStartTime() == null) ? 0 : getStartTime().hashCode());
-        result = prime * result + ((getEnd() == null) ? 0 : getEnd().hashCode());
-        result = prime * result + ((getEndPinyin() == null) ? 0 : getEndPinyin().hashCode());
-        result = prime * result + ((getEndTime() == null) ? 0 : getEndTime().hashCode());
+        result = prime * result + ((getTrainCode() == null) ? 0 : getTrainCode().hashCode());
+        result = prime * result + ((getIndex() == null) ? 0 : getIndex().hashCode());
+        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+        result = prime * result + ((getNamePinyin() == null) ? 0 : getNamePinyin().hashCode());
+        result = prime * result + ((getInTime() == null) ? 0 : getInTime().hashCode());
+        result = prime * result + ((getOutTime() == null) ? 0 : getOutTime().hashCode());
+        result = prime * result + ((getStopTime() == null) ? 0 : getStopTime().hashCode());
+        result = prime * result + ((getKm() == null) ? 0 : getKm().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         return result;
@@ -143,14 +145,14 @@ public class DailyTrain implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", date=").append(date);
-        sb.append(", code=").append(code);
-        sb.append(", type=").append(type);
-        sb.append(", start=").append(start);
-        sb.append(", startPinyin=").append(startPinyin);
-        sb.append(", startTime=").append(startTime);
-        sb.append(", end=").append(end);
-        sb.append(", endPinyin=").append(endPinyin);
-        sb.append(", endTime=").append(endTime);
+        sb.append(", trainCode=").append(trainCode);
+        sb.append(", index=").append(index);
+        sb.append(", name=").append(name);
+        sb.append(", namePinyin=").append(namePinyin);
+        sb.append(", inTime=").append(inTime);
+        sb.append(", outTime=").append(outTime);
+        sb.append(", stopTime=").append(stopTime);
+        sb.append(", km=").append(km);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
