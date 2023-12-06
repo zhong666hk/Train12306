@@ -13,7 +13,7 @@ spring:
   quartz:
     job-store-type: jdbc
     jdbc:
-      initialize-schema: always
+      initialize-schema: never
     properties:
       org.quartz.scheduler.instanceName: MyClusteredScheduler
       org.quartz.scheduler.instanceId: test
