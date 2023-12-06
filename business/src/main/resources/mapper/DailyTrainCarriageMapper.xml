@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wbu.train.business.daily_train_carriage.mapper.DailyTrainCarriageMapper">
+
+    <resultMap id="BaseResultMap" type="com.wbu.train.business.daily_train_carriage.domain.DailyTrainCarriage">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="date" column="date" jdbcType="DATE"/>
+            <result property="trainCode" column="train_code" jdbcType="VARCHAR"/>
+            <result property="index" column="index" jdbcType="INTEGER"/>
+            <result property="seatType" column="seat_type" jdbcType="CHAR"/>
+            <result property="seatCount" column="seat_count" jdbcType="INTEGER"/>
+            <result property="rowCount" column="row_count" jdbcType="INTEGER"/>
+            <result property="colCount" column="col_count" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,date,train_code,
+        index,seat_type,seat_count,
+        row_count,col_count,create_time,
+        update_time
+    </sql>
+</mapper>

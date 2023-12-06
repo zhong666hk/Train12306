@@ -31,6 +31,7 @@ public enum AppExceptionExample {
     QUERY_TASK_ERROR(10024,"查看定时任务失败:调度异常"),
     DAILY_TRAIN_STATION_HAS_EXIST(10025,"今日火车车站已经存在"),
     DAILY_TRAIN_CODE_HAS_EXIST(10026,"今日火车编号已经存在"),
+    DAILY_TRAIN_CARRIAGE_HAS_EXIST(10027,"今日火车车厢已经存在"),
     ;
 
 
