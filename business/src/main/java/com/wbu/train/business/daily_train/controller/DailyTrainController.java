@@ -15,7 +15,10 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping("/business/daily_train")
@@ -57,6 +60,15 @@ public class DailyTrainController {
     public CommonRespond<Boolean> delete(@PathVariable Long id) {
         if (dailyTrainService.deleteById(id)){
             return CommonRespond.succeed("删除成功",true);
+        }
+        return CommonRespond.error(AppExceptionExample.PASSENGER_DELETE_ERROR);
+    }
+
+    @LogAnnotation
+    @GetMapping("/gen-daily/{date}")
+    public CommonRespond<Boolean> gen(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        if (dailyTrainService.genDaily(date)){
+            return CommonRespond.succeed("自动生成日常车次信息成功",true);
         }
         return CommonRespond.error(AppExceptionExample.PASSENGER_DELETE_ERROR);
     }

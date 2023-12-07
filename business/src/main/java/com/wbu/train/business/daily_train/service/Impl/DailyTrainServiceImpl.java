@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wbu.train.business.train.domain.Train;
+import com.wbu.train.business.train.service.TrainService;
 import com.wbu.train.common.exception.AppExceptionExample;
 import com.wbu.train.common.exception.MyException;
 import com.wbu.train.common.util.SnowUtil;
@@ -18,8 +19,10 @@ import com.wbu.train.business.daily_train.req.DailyTrainQueryReq;
 import com.wbu.train.business.daily_train.req.DailyTrainSaveReq;
 import com.wbu.train.business.daily_train.resp.DailyTrainQueryResp;
 import com.wbu.train.business.daily_train.service.DailyTrainService;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,6 +33,8 @@ import java.util.List;
 @Service
 public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTrain>
         implements DailyTrainService {
+    @Resource
+    private TrainService trainService;
 
     @Override
     public boolean saveDailyTrain(DailyTrainSaveReq req) {
@@ -86,6 +91,37 @@ public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTr
             return false;
         }
         return this.removeById(id);
+    }
+
+    @Override
+    public boolean genDaily(Date date) {
+        // 获取基本车次信息
+        List<Train> trainList = trainService.list();
+        if (CollectionUtil.isEmpty(trainList)){
+            throw new MyException(40000,"车次基础数据为空,生成失败");
+        }
+        // 自动生成防止多次生成 先删除数据再生成
+        for (Train train : trainList) {
+            if (!genDailyTrain(date, train)){
+                throw new MyException(40000,"生成异常");
+            }
+        }
+        return true;
+    }
+
+    private boolean genDailyTrain(Date date, Train train) {
+        // 1.删除已有的数据
+        QueryWrapper<DailyTrain> dailyTrainQueryWrapper = new QueryWrapper<>();
+        dailyTrainQueryWrapper.eq("date", date).eq("code", train.getCode());
+        this.remove(dailyTrainQueryWrapper);
+        //2.生成数据
+        DateTime now = DateTime.now();
+        DailyTrain dailyTrain = BeanUtil.copyProperties(train, DailyTrain.class);
+        dailyTrain.setId(SnowUtil.getSnowflakeNextId());
+        dailyTrain.setCreateTime(now);
+        dailyTrain.setUpdateTime(now);
+        dailyTrain.setDate(date);
+        return this.save(dailyTrain);
     }
 }
 

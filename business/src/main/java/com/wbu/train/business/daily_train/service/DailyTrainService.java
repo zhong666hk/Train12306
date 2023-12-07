@@ -8,6 +8,8 @@ import com.wbu.train.business.daily_train.req.DailyTrainQueryReq;
 import com.wbu.train.business.daily_train.req.DailyTrainSaveReq;
 import com.wbu.train.business.daily_train.resp.DailyTrainQueryResp;
 
+import java.util.Date;
+
 /**
 * @author 钟正保
 * @description 针对表【dailyTrain(乘车人)】的数据库操作Service
@@ -28,4 +30,10 @@ public interface DailyTrainService extends IService<DailyTrain> {
      * @param id
      */
     public boolean  deleteById(Long id);
+
+    /**
+     * @param date 日期
+     * 生成某日所有车次信息，包括车次，车站、车厢、座位
+     */
+    public boolean genDaily(Date date);
 }

@@ -96,6 +96,7 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train>
     public boolean genSeatByTrainCode(String code) {
         return trainSeatService.genTrainSeat(code);
     }
+
 }
 
 
