@@ -8,6 +8,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wbu.train.business.train_station.domain.TrainStation;
 import com.wbu.train.common.enums.SeatColEnum;
 import com.wbu.train.common.exception.AppExceptionExample;
 import com.wbu.train.common.exception.MyException;
@@ -18,6 +19,8 @@ import com.wbu.train.business.train_carriage.req.TrainCarriageQueryReq;
 import com.wbu.train.business.train_carriage.req.TrainCarriageSaveReq;
 import com.wbu.train.business.train_carriage.resp.TrainCarriageQueryResp;
 import com.wbu.train.business.train_carriage.service.TrainCarriageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,14 +33,13 @@ import java.util.List;
 @Service
 public class TrainCarriageServiceImpl extends ServiceImpl<TrainCarriageMapper, TrainCarriage>
         implements TrainCarriageService {
-
+    private Logger LOG = LoggerFactory.getLogger(TrainCarriageServiceImpl.class);
     @Override
     public boolean saveTrainCarriage(TrainCarriageSaveReq req) {
         DateTime date = DateUtil.dateSecond(); // hutool的是已经格式化了的
         if (ObjectUtil.isNull(req)) {
             return false;
         }
-
         // 计算座位数和列数
         List<SeatColEnum> colsByType = SeatColEnum.getColsByType(req.getSeatType());
         req.setColCount(colsByType.size());
@@ -94,6 +96,16 @@ public class TrainCarriageServiceImpl extends ServiceImpl<TrainCarriageMapper, T
         QueryWrapper<TrainCarriage> trainCarriageQueryWrapper = new QueryWrapper<>();
         trainCarriageQueryWrapper.eq("train_code",trainCode)
                 .orderByAsc("`index`");
+        return this.list(trainCarriageQueryWrapper);
+    }
+
+    @Override
+    public List<TrainCarriage> getTrainCarriageByTrainCarriageCode(String trainCode) {
+        LOG.info("获取站台基本信息getTrainCarriageByTrainCode trainCode={}",trainCode);
+        QueryWrapper<TrainCarriage> trainCarriageQueryWrapper = new QueryWrapper<>();
+        trainCarriageQueryWrapper.eq("train_code",trainCode).
+                orderByAsc("`index`");
+        LOG.info("获取站台基本信息getTrainCarriageByTrainCode完成");
         return this.list(trainCarriageQueryWrapper);
     }
 }

@@ -8,6 +8,8 @@ import com.wbu.train.business.daily_train_carriage.req.DailyTrainCarriageQueryRe
 import com.wbu.train.business.daily_train_carriage.req.DailyTrainCarriageSaveReq;
 import com.wbu.train.business.daily_train_carriage.resp.DailyTrainCarriageQueryResp;
 
+import java.util.Date;
+
 /**
 * @author 钟正保
 * @description 针对表【daily_train_carriage(乘车人)】的数据库操作Service
@@ -28,4 +30,12 @@ public interface DailyTrainCarriageService extends IService<DailyTrainCarriage> 
      * @param id
      */
     public boolean  deleteById(Long id);
+
+
+    /**
+     * 生成每日车厢数据
+     * @param date 日期
+     * @param trainCode 火车编号
+     */
+    public void genDaily(Date date, String trainCode);
 }

@@ -15,11 +15,16 @@ import com.wbu.train.business.daily_train_station.req.DailyTrainStationSaveReq;
 import com.wbu.train.business.daily_train_station.resp.DailyTrainStationQueryResp;
 import com.wbu.train.business.daily_train_station.service.DailyTrainStationService;
 import com.wbu.train.business.train_station.domain.TrainStation;
+import com.wbu.train.business.train_station.service.TrainStationService;
 import com.wbu.train.common.exception.AppExceptionExample;
 import com.wbu.train.common.exception.MyException;
 import com.wbu.train.common.util.SnowUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +36,9 @@ import java.util.List;
 public class DailyTrainStationServiceImpl extends ServiceImpl<DailyTrainStationMapper, DailyTrainStation>
         implements DailyTrainStationService {
 
+    @Autowired
+    private TrainStationService trainStationService;
+    private Logger LOG = LoggerFactory.getLogger(DailyTrainStationServiceImpl.class);
     @Override
     public boolean saveDailyTrainStation(DailyTrainStationSaveReq req) {
         DateTime date = DateUtil.dateSecond(); // hutool的是已经格式化了的
@@ -73,9 +81,9 @@ public class DailyTrainStationServiceImpl extends ServiceImpl<DailyTrainStationM
             dailyTrainStationQueryWrapper.eq("train_code",req.getTrainCode());
         }
         if (ObjectUtil.isNotNull(req.getDate())){
-            dailyTrainStationQueryWrapper.eq("date",req.getDate());
+            dailyTrainStationQueryWrapper.eq("`date`",req.getDate());
         }
-        dailyTrainStationQueryWrapper.orderByDesc("date");
+        dailyTrainStationQueryWrapper.orderByDesc("`date`");
         dailyTrainStationQueryWrapper.orderByAsc("train_code","`index`");
 
         Page<DailyTrainStation> page = this.page(new Page<>(req.getPage(), req.getSize()), dailyTrainStationQueryWrapper);
@@ -90,6 +98,34 @@ public class DailyTrainStationServiceImpl extends ServiceImpl<DailyTrainStationM
             return false;
         }
         return this.removeById(id);
+    }
+
+    @Override
+    public void genDaily(Date date, String trainCode) {
+        LOG.info("开始生成{}天  {}车次的车站信息",DateUtil.format(date,"yyyy-MM-dd"),trainCode);
+        //1.先删除
+        QueryWrapper<DailyTrainStation> dailyTrainStationQueryWrapper = new QueryWrapper<>();
+        dailyTrainStationQueryWrapper.eq("`date`",date).eq("train_code",trainCode);
+        this.remove(dailyTrainStationQueryWrapper);
+        //2.再生成
+            //2.1 先查该车次的所有的车站的基础信息
+        List<TrainStation> stationList = trainStationService.getTrainStationByTrainCode(trainCode);
+        if (CollectionUtil.isEmpty(stationList)){
+            throw new MyException(40000,"当前车次还未添加车站信息");
+        }
+            //2.2循环station来生成每日车站信息
+        for (TrainStation trainStation : stationList) {
+            DateTime now = DateTime.now();
+            DailyTrainStation dailyTrainStation = BeanUtil.copyProperties(trainStation, DailyTrainStation.class);
+            dailyTrainStation.setId(SnowUtil.getSnowflakeNextId());
+            dailyTrainStation.setCreateTime(now);
+            dailyTrainStation.setUpdateTime(now);
+            dailyTrainStation.setDate(date);
+            if (!this.save(dailyTrainStation)) {
+                throw new MyException(40000,"生成每日车站异常");
+            }
+        }
+        LOG.info("生成{}天  {}车站的车站信息完成",DateUtil.formatDate(date),trainCode);
     }
 }
 

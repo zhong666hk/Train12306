@@ -8,6 +8,8 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wbu.train.business.daily_train_carriage.service.DailyTrainCarriageService;
+import com.wbu.train.business.daily_train_station.service.DailyTrainStationService;
 import com.wbu.train.business.train.domain.Train;
 import com.wbu.train.business.train.service.TrainService;
 import com.wbu.train.common.exception.AppExceptionExample;
@@ -35,6 +37,12 @@ public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTr
         implements DailyTrainService {
     @Resource
     private TrainService trainService;
+
+    @Resource
+    private DailyTrainStationService dailyTrainStationService;
+
+    @Resource
+    private DailyTrainCarriageService dailyTrainCarriageService;
 
     @Override
     public boolean saveDailyTrain(DailyTrainSaveReq req) {
@@ -95,13 +103,14 @@ public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTr
 
     @Override
     public boolean genDaily(Date date) {
-        // 获取基本车次信息
+        //1 获取基本车次信息
         List<Train> trainList = trainService.list();
         if (CollectionUtil.isEmpty(trainList)){
             throw new MyException(40000,"车次基础数据为空,生成失败");
         }
-        // 自动生成防止多次生成 先删除数据再生成
+        // 2自动生成防止多次生成 先删除数据再生成
         for (Train train : trainList) {
+            //2.1生成车次 车站信息
             if (!genDailyTrain(date, train)){
                 throw new MyException(40000,"生成异常");
             }
@@ -121,7 +130,13 @@ public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTr
         dailyTrain.setCreateTime(now);
         dailyTrain.setUpdateTime(now);
         dailyTrain.setDate(date);
-        return this.save(dailyTrain);
+        boolean save = this.save(dailyTrain);
+        // 3.生成车站
+        dailyTrainStationService.genDaily(date,train.getCode());
+        //4.生成车厢
+        dailyTrainCarriageService.genDaily(date,train.getCode());
+
+        return save;
     }
 }
 

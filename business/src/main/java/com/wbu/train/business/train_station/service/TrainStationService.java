@@ -8,6 +8,8 @@ import com.wbu.train.business.train_station.req.TrainStationQueryReq;
 import com.wbu.train.business.train_station.req.TrainStationSaveReq;
 import com.wbu.train.business.train_station.resp.TrainStationQueryResp;
 
+import java.util.List;
+
 /**
 * @author 钟正保
 * @description 针对表【train_station(乘车人)】的数据库操作Service
@@ -28,4 +30,9 @@ public interface TrainStationService extends IService<TrainStation> {
      * @param id
      */
     public boolean  deleteById(Long id);
+
+    /**
+     * 根据trainCode来查所有的车站信息
+     */
+    public List<TrainStation> getTrainStationByTrainCode(String trainCode);
 }

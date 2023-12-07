@@ -35,4 +35,6 @@ public interface TrainCarriageService extends IService<TrainCarriage> {
      * 查询当前车次的所有车厢数据
      */
     public List<TrainCarriage> selectByTrainCode(String trainCode);
+
+    List<TrainCarriage> getTrainCarriageByTrainCarriageCode(String trainCode);
 }

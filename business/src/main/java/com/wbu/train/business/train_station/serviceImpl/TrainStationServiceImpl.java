@@ -17,6 +17,8 @@ import com.wbu.train.business.train_station.service.TrainStationService;
 import com.wbu.train.common.exception.AppExceptionExample;
 import com.wbu.train.common.exception.MyException;
 import com.wbu.train.common.util.SnowUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,14 +31,13 @@ import java.util.List;
 @Service
 public class TrainStationServiceImpl extends ServiceImpl<TrainStationMapper, TrainStation>
         implements TrainStationService {
-
+    private Logger LOG = LoggerFactory.getLogger(TrainStationServiceImpl.class);
     @Override
     public boolean saveTrainStation(TrainStationSaveReq req) {
         DateTime date = DateUtil.dateSecond(); // hutool的是已经格式化了的
         if (ObjectUtil.isNull(req)) {
             return false;
         }
-
         // 拷贝类
         TrainStation trainStation = BeanUtil.copyProperties(req, TrainStation.class);
         // 如果是id为空--->说明是添加的操作
@@ -71,7 +72,7 @@ public class TrainStationServiceImpl extends ServiceImpl<TrainStationMapper, Tra
         if (ObjectUtil.isNotEmpty(req.getTrainCode())){
             trainStationQueryWrapper.eq("train_code",req.getTrainCode());
         }
-        trainStationQueryWrapper.orderByDesc("date");
+
         trainStationQueryWrapper.orderByAsc("train_code","`index`");
         //原理会对第一个sql进行拦截 添加limit
 //        PageHelper.startPage( req.getPage(),req.getSize());
@@ -87,6 +88,16 @@ public class TrainStationServiceImpl extends ServiceImpl<TrainStationMapper, Tra
             return false;
         }
         return this.removeById(id);
+    }
+
+    @Override
+    public List<TrainStation> getTrainStationByTrainCode(String trainCode) {
+        LOG.info("获取站台基本信息getTrainStationByTrainCode trainCode={}",trainCode);
+        QueryWrapper<TrainStation> trainStationQueryWrapper = new QueryWrapper<>();
+        trainStationQueryWrapper.eq("train_code",trainCode).
+                orderByAsc("`index`");
+        LOG.info("获取站台基本信息getTrainStationByTrainCode完成");
+        return this.list(trainStationQueryWrapper);
     }
 }
 

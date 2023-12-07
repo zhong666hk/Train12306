@@ -8,6 +8,8 @@ import com.wbu.train.business.daily_train_station.req.DailyTrainStationQueryReq;
 import com.wbu.train.business.daily_train_station.req.DailyTrainStationSaveReq;
 import com.wbu.train.business.daily_train_station.resp.DailyTrainStationQueryResp;
 
+import java.util.Date;
+
 /**
  * @author 钟正保
  * @description 针对表【DailyTrainStation(乘车人)】的数据库操作Service
@@ -30,4 +32,6 @@ public interface DailyTrainStationService extends IService<DailyTrainStation> {
      * @param id
      */
     public boolean deleteById(Long id);
+
+    public void genDaily(Date date,String trainCode);
 }
