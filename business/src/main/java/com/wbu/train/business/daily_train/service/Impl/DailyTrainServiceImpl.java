@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wbu.train.business.daily_train_carriage.service.DailyTrainCarriageService;
+import com.wbu.train.business.daily_train_seat.service.DailyTrainSeatService;
 import com.wbu.train.business.daily_train_station.service.DailyTrainStationService;
 import com.wbu.train.business.train.domain.Train;
 import com.wbu.train.business.train.service.TrainService;
@@ -37,6 +38,9 @@ public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTr
         implements DailyTrainService {
     @Resource
     private TrainService trainService;
+
+    @Resource
+    private DailyTrainSeatService dailyTrainSeatService;
 
     @Resource
     private DailyTrainStationService dailyTrainStationService;
@@ -135,7 +139,8 @@ public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTr
         dailyTrainStationService.genDaily(date,train.getCode());
         //4.生成车厢
         dailyTrainCarriageService.genDaily(date,train.getCode());
-
+        //5.生成每日座位
+        dailyTrainSeatService.genDaily(date,train.getCode());
         return save;
     }
 }

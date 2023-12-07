@@ -139,6 +139,16 @@ public class TrainSeatServiceImpl extends ServiceImpl<TrainSeatMapper, TrainSeat
         }
         return this.saveBatch(trainSeatArrayList);
     }
+
+    @Override
+    public List<TrainSeat> getTrainSeatByTrainCode(String trainCode) {
+        LOG.info("获取站台基本信息getTrainSeatByTrainCode trainCode={}",trainCode);
+        QueryWrapper<TrainSeat> trainSeatQueryWrapper = new QueryWrapper<>();
+        trainSeatQueryWrapper.eq("train_code",trainCode).
+                orderByAsc("carriage_index");
+        LOG.info("获取站台基本信息getTrainSeatByTrainCode完成");
+        return this.list(trainSeatQueryWrapper);
+    }
 }
 
 

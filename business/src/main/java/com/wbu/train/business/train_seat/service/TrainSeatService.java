@@ -3,10 +3,13 @@ package com.wbu.train.business.train_seat.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wbu.train.business.train_carriage.domain.TrainCarriage;
 import com.wbu.train.business.train_seat.domain.TrainSeat;
 import com.wbu.train.business.train_seat.req.TrainSeatQueryReq;
 import com.wbu.train.business.train_seat.req.TrainSeatSaveReq;
 import com.wbu.train.business.train_seat.resp.TrainSeatQueryResp;
+
+import java.util.List;
 
 /**
 * @author 钟正保
@@ -33,4 +36,6 @@ public interface TrainSeatService extends IService<TrainSeat> {
      * 自动生成座位
      */
     public boolean genTrainSeat(String trainCode);
+
+    List<TrainSeat> getTrainSeatByTrainCode(String trainCode);
 }

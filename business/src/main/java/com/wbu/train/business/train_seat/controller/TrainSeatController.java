@@ -2,6 +2,7 @@ package com.wbu.train.business.train_seat.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wbu.train.business.train.service.TrainService;
 import com.wbu.train.common.Aspect.annotation.LogAnnotation;
 import com.wbu.train.common.exception.AppExceptionExample;
 import com.wbu.train.common.respon.CommonRespond;
@@ -25,18 +26,17 @@ public class TrainSeatController {
     @Autowired
     private TrainSeatService trainSeatService;
 
-
     @LogAnnotation
     @PostMapping("/save")
     public CommonRespond<Boolean> register(@Valid @RequestBody TrainSeatSaveReq trainSeatSaveReq) {
         if (ObjectUtil.isEmpty(trainSeatSaveReq)) {
             return CommonRespond.error(RespondExample.REQUEST_PARAMETER_IS_ILLEGAL);
         }
-        try{
+        try {
             if (trainSeatService.saveTrainSeat(trainSeatSaveReq)) {
-                return CommonRespond.succeed("乘客添加或修改成功！！！",true);
+                return CommonRespond.succeed("乘客添加或修改成功！！！", true);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             LOG.error(e.getMessage());
             return CommonRespond.error(AppExceptionExample.PASSENGER_SAVE_ERROR);
         }
@@ -55,9 +55,10 @@ public class TrainSeatController {
     @LogAnnotation
     @DeleteMapping("/delete/{id}")
     public CommonRespond<Boolean> delete(@PathVariable Long id) {
-        if (trainSeatService.deleteById(id)){
-            return CommonRespond.succeed("删除成功",true);
+        if (trainSeatService.deleteById(id)) {
+            return CommonRespond.succeed("删除成功", true);
         }
         return CommonRespond.error(AppExceptionExample.PASSENGER_DELETE_ERROR);
     }
+
 }
