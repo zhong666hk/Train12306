@@ -67,11 +67,9 @@ public class TrainController {
     }
 
     @LogAnnotation
-    @GetMapping("/gen/{code}")
-    public CommonRespond<Boolean> genSeat(@PathVariable String code) {
-        if (trainService.genSeatByTrainCode(code)) {
-            return CommonRespond.succeed("座位自动生成成功", true);
-        }
-        return CommonRespond.error(AppExceptionExample.TRAIN_SEAT_GEN_ERROR);
+    @GetMapping("hello")
+    public String hello() {
+
+        return "hello";
     }
 }

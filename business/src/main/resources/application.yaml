@@ -1,6 +1,8 @@
 server:
   port: 8002
 spring:
+  application:
+    name: business
   devtools:
     restart:
       enabled: true

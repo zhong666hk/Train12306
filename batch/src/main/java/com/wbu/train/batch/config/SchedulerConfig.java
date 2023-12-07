@@ -1,6 +1,6 @@
 package com.wbu.train.batch.config;
 
-import com.wbu.train.batch.job.MyJobFactory;
+import com.wbu.train.batch.jobFactory.MyJobFactory;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

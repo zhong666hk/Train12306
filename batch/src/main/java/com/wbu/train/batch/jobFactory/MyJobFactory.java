@@ -1,4 +1,4 @@
-package com.wbu.train.batch.job;
+package com.wbu.train.batch.jobFactory;
 
 import jakarta.annotation.Resource;
 import org.quartz.spi.TriggerFiredBundle;

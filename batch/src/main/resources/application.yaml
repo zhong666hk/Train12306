@@ -1,6 +1,8 @@
 server:
   port: 8003
 spring:
+  application:
+    name: batch
   devtools:
     restart:
       enabled: true
