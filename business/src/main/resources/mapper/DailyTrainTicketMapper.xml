@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wbu.train.business.daily_train_ticket.mapper.DailyTrainTicketMapper">
+
+    <resultMap id="BaseResultMap" type="com.wbu.train.business.daily_train_ticket.domain.DailyTrainTicket">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="date" column="date" jdbcType="DATE"/>
+            <result property="trainCode" column="train_code" jdbcType="VARCHAR"/>
+            <result property="start" column="start" jdbcType="VARCHAR"/>
+            <result property="startPinyin" column="start_pinyin" jdbcType="VARCHAR"/>
+            <result property="startTime" column="start_time" jdbcType="TIME"/>
+            <result property="startIndex" column="start_index" jdbcType="INTEGER"/>
+            <result property="end" column="end" jdbcType="VARCHAR"/>
+            <result property="endPinyin" column="end_pinyin" jdbcType="VARCHAR"/>
+            <result property="endTime" column="end_time" jdbcType="TIME"/>
+            <result property="endIndex" column="end_index" jdbcType="INTEGER"/>
+            <result property="ydz" column="ydz" jdbcType="INTEGER"/>
+            <result property="ydzPrice" column="ydz_price" jdbcType="DECIMAL"/>
+            <result property="edz" column="edz" jdbcType="INTEGER"/>
+            <result property="edzPrice" column="edz_price" jdbcType="DECIMAL"/>
+            <result property="rw" column="rw" jdbcType="INTEGER"/>
+            <result property="rwPrice" column="rw_price" jdbcType="DECIMAL"/>
+            <result property="yw" column="yw" jdbcType="INTEGER"/>
+            <result property="ywPrice" column="yw_price" jdbcType="DECIMAL"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,date,train_code,
+        start,start_pinyin,start_time,
+        start_index,end,end_pinyin,
+        end_time,end_index,ydz,
+        ydz_price,edz,edz_price,
+        rw,rw_price,yw,
+        yw_price,create_time,update_time
+    </sql>
+</mapper>
