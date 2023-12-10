@@ -3,10 +3,14 @@ package com.wbu.train.business.daily_train_ticket.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wbu.train.business.daily_train.domain.DailyTrain;
 import com.wbu.train.business.daily_train_ticket.domain.DailyTrainTicket;
 import com.wbu.train.business.daily_train_ticket.req.DailyTrainTicketQueryReq;
 import com.wbu.train.business.daily_train_ticket.req.DailyTrainTicketSaveReq;
 import com.wbu.train.business.daily_train_ticket.resp.DailyTrainTicketQueryResp;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
 * @author 钟正保
@@ -28,4 +32,8 @@ public interface DailyTrainTicketService extends IService<DailyTrainTicket> {
      * @param id
      */
     public boolean  deleteById(Long id);
+
+
+    @Transactional
+    void genDaily(DailyTrain dailyTrain, Date date, String trainCode);
 }

@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -93,8 +94,9 @@ public class DailyTrainSeatServiceImpl extends ServiceImpl<DailyTrainSeatMapper,
     }
 
     @Override
+    @Transactional
     public void genDaily(Date date, String trainCode) {
-        LOG.info("开始生成{}天  {}车次的车站信息", DateUtil.format(date, "yyyy-MM-dd"), trainCode);
+        LOG.info("开始生成{}天  {}车次的座位信息", DateUtil.format(date, "yyyy-MM-dd"), trainCode);
         //1.先删除
         QueryWrapper<DailyTrainSeat> dailyTrainSeatQueryWrapper = new QueryWrapper<>();
         dailyTrainSeatQueryWrapper.eq("`date`", date).eq("train_code", trainCode);
@@ -122,6 +124,25 @@ public class DailyTrainSeatServiceImpl extends ServiceImpl<DailyTrainSeatMapper,
             }
         }
         LOG.info("生成{}天  {}车次的座位信息完成", DateUtil.formatDate(date), trainCode);
+    }
+
+    /**
+     * 计算当前类型的票数
+     * @param date 时间
+     * @param trainCode 火车编号
+     * @param seatType 座位类型
+     */
+    @Override
+    public int countSeat(Date date, String trainCode, String seatType){
+        QueryWrapper<DailyTrainSeat> dailyTrainSeatQueryWrapper = new QueryWrapper<>();
+        dailyTrainSeatQueryWrapper.eq("date",date)
+                .eq("train_code",trainCode)
+                .eq("seat_type",seatType);
+        long count = this.count(dailyTrainSeatQueryWrapper);
+        if (count==0L){
+            return -1;
+        }
+        return (int) count;
     }
 }
 

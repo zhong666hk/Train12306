@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -101,6 +102,7 @@ public class DailyTrainStationServiceImpl extends ServiceImpl<DailyTrainStationM
     }
 
     @Override
+    @Transactional
     public void genDaily(Date date, String trainCode) {
         LOG.info("开始生成{}天  {}车次的车站信息",DateUtil.format(date,"yyyy-MM-dd"),trainCode);
         //1.先删除

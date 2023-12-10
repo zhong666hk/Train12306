@@ -16,4 +16,8 @@ public class DailyTrainTicketQueryReq extends PageReq {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
 
+    private  String start;
+
+    private String end;
+
 }

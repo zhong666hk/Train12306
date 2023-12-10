@@ -32,4 +32,12 @@ public interface DailyTrainSeatService extends IService<DailyTrainSeat> {
     public boolean  deleteById(Long id);
 
     void genDaily(Date date, String trainCode);
+
+    /**
+     * 计算当前类型的票数
+     * @param date 时间
+     * @param trainCode 火车编号
+     * @param seatType 座位类型
+     */
+    public int countSeat(Date date, String trainCode, String seatType);
 }

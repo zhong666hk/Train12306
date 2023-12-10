@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wbu.train.business.daily_train_carriage.service.DailyTrainCarriageService;
 import com.wbu.train.business.daily_train_seat.service.DailyTrainSeatService;
 import com.wbu.train.business.daily_train_station.service.DailyTrainStationService;
+import com.wbu.train.business.daily_train_ticket.service.DailyTrainTicketService;
 import com.wbu.train.business.train.domain.Train;
 import com.wbu.train.business.train.service.TrainService;
 import com.wbu.train.common.exception.AppExceptionExample;
@@ -24,6 +25,7 @@ import com.wbu.train.business.daily_train.resp.DailyTrainQueryResp;
 import com.wbu.train.business.daily_train.service.DailyTrainService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -47,6 +49,9 @@ public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTr
 
     @Resource
     private DailyTrainCarriageService dailyTrainCarriageService;
+
+    @Resource
+    private DailyTrainTicketService dailyTrainTicketService;
 
     @Override
     public boolean saveDailyTrain(DailyTrainSaveReq req) {
@@ -106,6 +111,7 @@ public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTr
     }
 
     @Override
+    @Transactional
     public boolean genDaily(Date date) {
         //1 获取基本车次信息
         List<Train> trainList = trainService.list();
@@ -122,7 +128,8 @@ public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTr
         return true;
     }
 
-    private boolean genDailyTrain(Date date, Train train) {
+    @Transactional
+    public boolean genDailyTrain(Date date, Train train) {
         // 1.删除已有的数据
         QueryWrapper<DailyTrain> dailyTrainQueryWrapper = new QueryWrapper<>();
         dailyTrainQueryWrapper.eq("date", date).eq("code", train.getCode());
@@ -141,6 +148,8 @@ public class DailyTrainServiceImpl extends ServiceImpl<DailyTrainMapper, DailyTr
         dailyTrainCarriageService.genDaily(date,train.getCode());
         //5.生成每日座位
         dailyTrainSeatService.genDaily(date,train.getCode());
+        //6.生成余票的信息
+        dailyTrainTicketService.genDaily(dailyTrain,date,train.getCode());
         return save;
     }
 }

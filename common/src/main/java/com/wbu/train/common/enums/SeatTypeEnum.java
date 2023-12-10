@@ -28,12 +28,20 @@ public enum SeatTypeEnum {
         this.price = price;
     }
 
-    public String getCode() {
+    public String getKey() {
         return key;
     }
 
-    public String getDesc() {
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
         return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public BigDecimal getPrice() {
@@ -44,23 +52,12 @@ public enum SeatTypeEnum {
         this.price = price;
     }
 
-    public static List<HashMap<String,String>> getEnumList() {
-        List<HashMap<String, String>> list = new ArrayList<>();
-        for (SeatTypeEnum anEnum : EnumSet.allOf(SeatTypeEnum.class)) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put("key",anEnum.key);
-            map.put("value",anEnum.value);
-            list.add(map);
-        }
-        return list;
-    }
-
-    public static SeatTypeEnum getEnumByCode(String key) {
-        for (SeatTypeEnum enums : SeatTypeEnum.values()) {
-            if (enums.getCode().equalsIgnoreCase(key)) {
-                return enums;
-            }
-        }
-        return null;
+    @Override
+    public String toString() {
+        return "SeatTypeEnum{" +
+                "key='" + key + '\'' +
+                ", value='" + value + '\'' +
+                ", price=" + price +
+                '}';
     }
 }
