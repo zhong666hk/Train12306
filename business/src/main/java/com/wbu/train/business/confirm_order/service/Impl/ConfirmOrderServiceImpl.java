@@ -3,16 +3,19 @@ package com.wbu.train.business.confirm_order.service.Impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wbu.train.business.confirm_order.req.ConfirmOrderDoReq;
+import com.wbu.train.business.confirm_order.req.ConfirmOrderTicketReq;
 import com.wbu.train.business.daily_train_ticket.domain.DailyTrainTicket;
 import com.wbu.train.business.daily_train_ticket.service.DailyTrainTicketService;
 import com.wbu.train.common.context.LoginMemberContext;
 import com.wbu.train.common.enums.ConfirmOrderStatusEnum;
+import com.wbu.train.common.enums.SeatTypeEnum;
 import com.wbu.train.common.exception.MyException;
 import com.wbu.train.common.util.SnowUtil;
 import com.wbu.train.business.confirm_order.domain.ConfirmOrder;
@@ -117,7 +120,13 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
 
         // 三、查出余票记录，需要得到真实的库存
         DailyTrainTicket dailyTrainTicket = dailyTrainTicketService.selectByUniqueKey(reqDate, reqTrainCode, reqStart, reqEnd);
-        // 四、扣减余票数量，并判断余票是否足够
+        // 四、预扣减余票数量，并判断余票是否足够
+        for (ConfirmOrderTicketReq ticketReq : req.getTickets()) {
+            String seatTypeCode = ticketReq.getSeatTypeCode();
+            SeatTypeEnum seatTypeEnum = EnumUtil.getBy(SeatTypeEnum::getKey, seatTypeCode);
+            // 库存拦截
+            reduceTickets(dailyTrainTicket, seatTypeEnum);
+        }
 
         /* 五、选座
             1.每个车厢的获取座位数据
@@ -130,6 +139,40 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
             3.为会员增加购买记录
             4.更新确认订单成功
          */
+    }
+
+    private   void reduceTickets(DailyTrainTicket dailyTrainTicket, SeatTypeEnum seatTypeEnum) {
+        switch (seatTypeEnum){
+            case YDZ -> {
+                int countLeft= dailyTrainTicket.getYdz()-1;
+                // 库存拦截
+                if (countLeft<0){
+                    throw new  MyException(40000,"余票不足");
+                }
+                dailyTrainTicket.setYdz(countLeft);
+            }
+            case EDZ -> {
+                int countLeft= dailyTrainTicket.getEdz()-1;
+                if (countLeft<0){
+                    throw new  MyException(40000,"余票不足");
+                }
+                dailyTrainTicket.setEdz(countLeft);
+            }
+            case YW -> {
+                int countLeft= dailyTrainTicket.getYw()-1;
+                if (countLeft<0){
+                    throw new  MyException(40000,"余票不足");
+                }
+                dailyTrainTicket.setYw(countLeft);
+            }
+            case RW -> {
+                int countLeft= dailyTrainTicket.getRw()-1;
+                if (countLeft<0){
+                    throw new  MyException(40000,"余票不足");
+                }
+                dailyTrainTicket.setRw(countLeft);
+            }
+        }
     }
 }
 
