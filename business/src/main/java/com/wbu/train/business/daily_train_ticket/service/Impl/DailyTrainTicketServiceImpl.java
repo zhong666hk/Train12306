@@ -189,6 +189,29 @@ public class DailyTrainTicketServiceImpl extends ServiceImpl<DailyTrainTicketMap
         }
         LOG.info("生成{}天  {}车次的余票信息完成", DateUtil.formatDate(date), trainCode);
     }
+
+    /**
+     * 根据唯一键来查询余票
+     * @param date 时间
+     * @param trainCode 火车
+     * @param start 起点站
+     * @param end 终点
+     */
+    @Override
+    public DailyTrainTicket selectByUniqueKey(Date date,String trainCode,String start,String end){
+        QueryWrapper<DailyTrainTicket> dailyTrainTicketQueryWrapper = new QueryWrapper<>();
+        dailyTrainTicketQueryWrapper
+                .eq("date",date)
+                .eq("train_code",trainCode)
+                .eq("start",start)
+                .eq("end",end);
+        List<DailyTrainTicket> dailyTrainTicketList = this.list(dailyTrainTicketQueryWrapper);
+        if (CollectionUtil.isNotEmpty(dailyTrainTicketList)){
+            return dailyTrainTicketList.get(0);
+        }else {
+            return null;
+        }
+    }
 }
 
 

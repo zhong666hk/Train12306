@@ -64,4 +64,11 @@ public class PassengerController {
         }
         return CommonRespond.error(AppExceptionExample.PASSENGER_DELETE_ERROR);
     }
+
+    @LogAnnotation
+    @GetMapping("/query_mine")
+    public CommonRespond<List<PassengerQueryResp>> query_mine() {
+        List<PassengerQueryResp> passengerQueryResps = passengerService.queryMine();
+        return CommonRespond.succeed(passengerQueryResps);
+    }
 }

@@ -30,4 +30,6 @@ public interface PassengerService extends IService<Passenger> {
      * @param id
      */
     public boolean  deleteById(Long id);
+
+    List<PassengerQueryResp> queryMine();
 }

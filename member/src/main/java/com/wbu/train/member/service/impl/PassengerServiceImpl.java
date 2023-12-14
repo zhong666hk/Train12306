@@ -17,7 +17,7 @@ import com.wbu.train.member.resp.PassengerQueryResp;
 import com.wbu.train.member.service.PassengerService;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.util.List;
 
 /**
  * @author 钟正保
@@ -71,6 +71,19 @@ public class PassengerServiceImpl extends ServiceImpl<PassengerMapper, Passenger
             return false;
         }
         return this.removeById(id);
+    }
+
+    /**
+     * 查询所有乘客
+     */
+    @Override
+    public List<PassengerQueryResp> queryMine(){
+        QueryWrapper<Passenger> passengerQueryWrapper = new QueryWrapper<>();
+        passengerQueryWrapper
+                .eq("member_id",LoginMemberContext.getId())
+                .orderByAsc("name");
+        List<Passenger> passengerList = this.list(passengerQueryWrapper);
+        return BeanUtil.copyToList(passengerList,PassengerQueryResp.class);
     }
 }
 

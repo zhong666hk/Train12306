@@ -12,10 +12,18 @@ public class SpringMVCConfig implements WebMvcConfigurer {
     // 必需要注入到容器中的。
     @Resource
     AdminInterceptor adminInterceptor;
+    @Resource
+    MemberInterceptor memberInterceptor;
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(adminInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/**/login","/**/register");
+
+        registry.addInterceptor(memberInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/business/admin/**"
+                );
     }
 }

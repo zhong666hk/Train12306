@@ -36,4 +36,6 @@ public interface DailyTrainTicketService extends IService<DailyTrainTicket> {
 
     @Transactional
     void genDaily(DailyTrain dailyTrain, Date date, String trainCode);
+
+    DailyTrainTicket selectByUniqueKey(Date date, String trainCode, String start, String end);
 }
