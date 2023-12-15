@@ -9,6 +9,7 @@ import com.wbu.train.business.daily_train_seat.req.DailyTrainSeatSaveReq;
 import com.wbu.train.business.daily_train_seat.resp.DailyTrainSeatQueryResp;
 
 import java.util.Date;
+import java.util.List;
 
 /**
 * @author 钟正保
@@ -40,4 +41,6 @@ public interface DailyTrainSeatService extends IService<DailyTrainSeat> {
      * @param seatType 座位类型
      */
     public int countSeat(Date date, String trainCode, String seatType);
+
+    List<DailyTrainSeat> selectByCarriage(Date date, String trainCode, Integer carriageIndex);
 }

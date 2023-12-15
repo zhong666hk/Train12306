@@ -144,6 +144,23 @@ public class DailyTrainSeatServiceImpl extends ServiceImpl<DailyTrainSeatMapper,
         }
         return (int) count;
     }
+
+    /**
+     * 根据车厢序号查询座位
+     * @param date 时间
+     * @param trainCode 车次
+     * @param carriageIndex 车厢序号
+     */
+    @Override
+    public List<DailyTrainSeat> selectByCarriage(Date date,String trainCode ,Integer carriageIndex){
+        QueryWrapper<DailyTrainSeat> dailyTrainSeatQueryWrapper = new QueryWrapper<>();
+        dailyTrainSeatQueryWrapper
+                .eq("date",date)
+                .eq("train_code",trainCode)
+                .eq("carriage_index",carriageIndex)
+                .orderByAsc("carriage_seat_index");
+        return this.list(dailyTrainSeatQueryWrapper);
+    }
 }
 
 
