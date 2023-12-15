@@ -13,6 +13,10 @@ spring:
     username: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  #允许循环依赖 ---在解决spring事务，自己注入自己的时候要用到
+  main:
+    allow-circular-references: true
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志

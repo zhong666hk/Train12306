@@ -1051,6 +1051,8 @@ public class BatchApplication {
 ```
 
 
+
+
 ## 0.19、购票的规则
 **12306规则:**
   1. 只有全部都是一等座或者全部都是二等座才支持选座
@@ -1064,6 +1066,35 @@ public class BatchApplication {
   1. 如果没有选座就遍历车厢。直到选择到所有的选票。
   2. 如果有选座就先预选中第一张再选择下一张。只有当全部都有才会成功选择。否则就重新选择第一张车票。   
 
+### 20.事务
+![用于解决@Translational事务失效](/img/spring内调用.png "spring内调用")
+
+**@Trainsacational的12种失效的情况** 
+```txt
+1. 自调用问题： 如前面所讨论的，如果在同一类中的一个事务方法调用了另一个没有使用 @Transactional 注解的方法，那么事务可能无法生效。
+
+2. RuntimeException未被抛出： Spring 默认将只有 RuntimeException及其子类会导致事务回滚。如果其他类型的异常在事务方法中抛出，而且没有被捕获并且传播出方法，事务可能不会回滚。
+
+3. 在同一个类中的self-invocation： 在同一个类中的方法自调用（通过 this 引用），Spring 默认不会使用代理拦截这样的调用，因此事务可能无法生效。
+
+4. 在同一个类中的方法直接调用： 如果在同一个类中的一个方法直接调用另一个方法，而不是通过代理对象，事务可能不会生效。
+
+5. 在非 public 方法上使用 @Transactional： 默认情况下，Spring 会使用 JDK 动态代理，而 JDK 动态代理只能代理 public 方法。如果你在非 public 方法上使用 @Transactional，代理可能无法生效，从而导致事务失效。
+
+6. 异步方法： 在异步方法上使用 @Transactional 也可能导致事务失效，因为异步方法会在一个不同的线程中执行，而默认情况下，Spring 的事务是基于线程的。
+
+7. 非抛出异常的情况下的 rollback： 如果你使用 @Transactional(rollbackFor = Exception.class)，但是方法中并没有抛出 Exception 类或其子类的异常，事务可能不会回滚。
+
+8. 事务传播行为不当： 使用不合适的事务传播行为，可能导致事务的不一致性。比如，在一个事务方法中调用了另一个有可能回滚的事务方法，而传播行为设置为 Propagation.REQUIRED。
+
+9. 数据库引擎不支持事务： 如果你的数据库引擎不支持事务，那么 @Transactional 注解将不起作用。
+
+10. 没有配置事务管理器： 如果你没有配置事务管理器，Spring 将无法知道如何进行事务管理。
+
+11. 不同的 ApplicationContext 中的方法调用： 在不同的 ApplicationContext 中，AOP 代理可能无法正确工作，从而导致事务失效。
+
+12. 被final修饰的方法： 被 final 修饰的方法无法被动态代理，因此事务可能不会生效。
+```
 
 
 

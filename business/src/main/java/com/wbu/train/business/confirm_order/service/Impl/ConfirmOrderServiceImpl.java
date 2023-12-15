@@ -35,7 +35,9 @@ import com.wbu.train.business.confirm_order.service.ConfirmOrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,6 +55,9 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
     private DailyTrainTicketService dailyTrainTicketService;
     @Autowired
     private DailyTrainCarriageService dailyTrainCarriageService;
+
+    @Autowired
+    private ConfirmOrderServiceImpl confirmOrderServiceImpl;
 
     @Autowired
     private DailyTrainSeatService dailyTrainSeatService;
@@ -146,6 +151,11 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
             // 库存拦截
             reduceTickets(dailyTrainTicket, seatTypeEnum);
         }
+        /* 五、选座
+            1.每个车厢的获取座位数据
+            2.挑选符合条件的座位，如果这个车厢不满足，则进入下一个车厢。(多个选座应该在同一个车厢）
+         */
+
         // 最终的选座结果
         ArrayList<DailyTrainSeat> finalSeatList = new ArrayList<>();
 
@@ -199,18 +209,35 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
 
         }
         LOG.info("最终选座{}",finalSeatList);
-        /* 五、选座
-            1.每个车厢的获取座位数据
-            2.挑选符合条件的座位，如果这个车厢不满足，则进入下一个车厢。(多个选座应该在同一个车厢）
-         */
-
-
-        /*六、选中座位后事务处理
+        /*六、选中座位后事务处理 ---尽量做短事务-->重新弄个类
             1.座位表修改售卖情况sell;
             2.余票详细表的修改
             3.为会员增加购买记录
             4.更新确认订单成功
          */
+        confirmOrderServiceImpl.afterDoConfirm(finalSeatList);
+    }
+
+    /*六、选中座位后事务处理 ---尽量做短事务-->重新弄个类
+            1.座位表修改售卖情况sell;
+            2.余票详细表的修改
+            3.为会员增加购买记录
+            4.更新确认订单成功
+         */
+    @Transactional
+    public void afterDoConfirm(List<DailyTrainSeat> finalSeatList){
+        //1.座位表修改售卖情况sell;---用new 一个对象来部分更新
+        for (DailyTrainSeat dailyTrainSeat : finalSeatList) {
+            DailyTrainSeat seatForUpdate = new DailyTrainSeat();
+            seatForUpdate.setId(dailyTrainSeat.getId());
+            seatForUpdate.setUpdateTime(DateTime.now());
+            seatForUpdate.setSell(dailyTrainSeat.getSell());
+            dailyTrainSeatService.updateById(seatForUpdate);
+        }
+        /* 2.余票详细表的修改
+            将影响的余票都要卖掉
+         */
+
     }
 
     /**
