@@ -7,6 +7,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wbu.train.business.daily_train.domain.DailyTrain;
@@ -32,9 +33,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author 钟正保
@@ -212,6 +215,26 @@ public class DailyTrainTicketServiceImpl extends ServiceImpl<DailyTrainTicketMap
             return null;
         }
     }
+
+
+    @Override
+    public Integer updateCountBySell(Date date, String trainCode, String seatTypeCode, Integer minStartIndex, Integer maxStartIndex, Integer minEndIndex, Integer maxEndIndex) {
+        UpdateWrapper<DailyTrainTicket> dailyTrainTicketUpdateWrapper = new UpdateWrapper<>();
+        dailyTrainTicketUpdateWrapper
+                .setSql(seatTypeCode.equals("1"),"ydz = ydz - 1")
+                .setSql(seatTypeCode.equals("2"),"edz= edz -1")
+                .setSql(seatTypeCode.equals("3"),"rw= rw -1")
+                .setSql(seatTypeCode.equals("4"),"yw= yw -1")
+                .eq("date", date)
+                .eq("train_code", trainCode)
+                .ge("start_index", minStartIndex)
+                .le("start_index", maxStartIndex)
+                .ge("end_index", minEndIndex)
+                .le("end_index", maxEndIndex);
+
+        return baseMapper.update(null, dailyTrainTicketUpdateWrapper);
+    }
+
 }
 
 

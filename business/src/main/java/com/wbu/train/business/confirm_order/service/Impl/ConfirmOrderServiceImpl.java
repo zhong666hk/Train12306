@@ -215,7 +215,7 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
             3.为会员增加购买记录
             4.更新确认订单成功
          */
-        confirmOrderServiceImpl.afterDoConfirm(finalSeatList);
+        confirmOrderServiceImpl.afterDoConfirm(dailyTrainTicket,finalSeatList,tickets);
     }
 
     /*六、选中座位后事务处理 ---尽量做短事务-->重新弄个类
@@ -225,18 +225,52 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
             4.更新确认订单成功
          */
     @Transactional
-    public void afterDoConfirm(List<DailyTrainSeat> finalSeatList){
+    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket,List<DailyTrainSeat> finalSeatList,List<ConfirmOrderTicketReq> tickets){
         //1.座位表修改售卖情况sell;---用new 一个对象来部分更新
-        for (DailyTrainSeat dailyTrainSeat : finalSeatList) {
+        for (int i = 0; i < finalSeatList.size(); i++) {
             DailyTrainSeat seatForUpdate = new DailyTrainSeat();
+            DailyTrainSeat dailyTrainSeat =finalSeatList.get(i);
             seatForUpdate.setId(dailyTrainSeat.getId());
             seatForUpdate.setUpdateTime(DateTime.now());
-            seatForUpdate.setSell(dailyTrainSeat.getSell());
+            String sell = dailyTrainSeat.getSell();
+            seatForUpdate.setSell(sell);
             dailyTrainSeatService.updateById(seatForUpdate);
+            /* 2.余票详细表的修改将影响的余票都要卖掉
+            */
+            char[] sellCharArray = sell.toCharArray();
+            int start = dailyTrainTicket.getStartIndex();
+            int end = dailyTrainTicket.getEndIndex();
+            int minStartIndex =0;
+            for (int j = start-1; j >=0; j--) {
+                if (sellCharArray[j] == '1'){
+                    minStartIndex = j +1;
+                    break;
+                }
+            }
+            int maxEndIndex = sell.length();
+            for (int j = end; j < sellCharArray.length; j++) {
+                if (sellCharArray[j] == '1'){
+                    maxEndIndex = j;
+                    break;
+                }
+            }
+            int maxStartIndex =end -1;
+            int minEndIndex = start +1;
+            LOG.info("影响出发区间"+minStartIndex +"-"+maxStartIndex);
+            LOG.info("影响到站区间"+minEndIndex +"-"+maxEndIndex);
+            Integer resolute = dailyTrainTicketService.updateCountBySell(
+                    dailyTrainSeat.getDate(),
+                    dailyTrainSeat.getTrainCode(),
+                    dailyTrainSeat.getSeatType(),
+                    minStartIndex,
+                    maxStartIndex,
+                    minEndIndex,
+                    maxEndIndex);
+            if (resolute<0){
+                throw new MyException(40000,"影响区间车票减少异常");
+            }
         }
-        /* 2.余票详细表的修改
-            将影响的余票都要卖掉
-         */
+
 
     }
 
@@ -379,6 +413,11 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
         }
     }
 
+    /**
+     *  预减少库存
+     * @param dailyTrainTicket 车票
+     * @param seatTypeEnum 座位类型枚举
+     */
     private   void reduceTickets(DailyTrainTicket dailyTrainTicket, SeatTypeEnum seatTypeEnum) {
         switch (seatTypeEnum){
             case YDZ -> {

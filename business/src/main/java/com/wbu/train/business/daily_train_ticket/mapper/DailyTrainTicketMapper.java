@@ -4,6 +4,8 @@ package com.wbu.train.business.daily_train_ticket.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.wbu.train.business.daily_train_ticket.domain.DailyTrainTicket;
 
+import java.util.Date;
+
 /**
  * @author 钟正保
  * @description 针对表【daily_train_ticket(余票信息)】的数据库操作Mapper
@@ -11,5 +13,11 @@ import com.wbu.train.business.daily_train_ticket.domain.DailyTrainTicket;
  * @Entity generator.domain.DailyTrainTicket
  */
 public interface DailyTrainTicketMapper extends BaseMapper<DailyTrainTicket> {
-
+    public void updateCountBySell(Date date,
+                                  String trainCode,
+                                  Integer seatTypeCode,
+                                  Integer minStartIndex,
+                                  Integer maxStartIndex,
+                                  Integer minEndIndex,
+                                  Integer maxEndIndex);
 }

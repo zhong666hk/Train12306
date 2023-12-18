@@ -38,4 +38,13 @@ public interface DailyTrainTicketService extends IService<DailyTrainTicket> {
     void genDaily(DailyTrain dailyTrain, Date date, String trainCode);
 
     DailyTrainTicket selectByUniqueKey(Date date, String trainCode, String start, String end);
+
+
+    Integer updateCountBySell(Date date,
+                           String trainCode,
+                           String seatTypeCode,
+                           Integer minStartIndex,
+                           Integer maxStartIndex,
+                           Integer minEndIndex,
+                           Integer maxEndIndex);
 }

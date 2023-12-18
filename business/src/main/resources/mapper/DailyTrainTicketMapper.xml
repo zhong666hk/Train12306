@@ -37,4 +37,5 @@
         rw,rw_price,yw,
         yw_price,create_time,update_time
     </sql>
+
 </mapper>

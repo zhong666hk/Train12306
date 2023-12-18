@@ -14,6 +14,7 @@ public interface BusinessFeign {
      @GetMapping(value = "/train/hello",headers = {"token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MDE5MjA5NDMsIm1vYmlsZSI6IjE2NjA3MjExNTAzIiwiaWQiOjE3Mjk0Mzk4MzI1NzQzOTg0NjQsImV4cCI6MTcwMjAwNzM0MywiaWF0IjoxNzAxOTIwOTQzfQ.-7V49L6kpCtyA_KVAmE7SdNVVapG8TiLFHXbhd8ANEM"})
     String hello();
 
-    @GetMapping(value = "/daily_train/gen-daily/{date}",headers = {"token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MDE5MjA5NDMsIm1vYmlsZSI6IjE2NjA3MjExNTAzIiwiaWQiOjE3Mjk0Mzk4MzI1NzQzOTg0NjQsImV4cCI6MTcwMjAwNzM0MywiaWF0IjoxNzAxOTIwOTQzfQ.-7V49L6kpCtyA_KVAmE7SdNVVapG8TiLFHXbhd8ANEM"})
-    CommonRespond<Boolean> gen(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date);
+//    @GetMapping(value = "/daily_train/gen-daily/{date}",headers = {"token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MDE5MjA5NDMsIm1vYmlsZSI6IjE2NjA3MjExNTAzIiwiaWQiOjE3Mjk0Mzk4MzI1NzQzOTg0NjQsImV4cCI6MTcwMjAwNzM0MywiaWF0IjoxNzAxOTIwOTQzfQ.-7V49L6kpCtyA_KVAmE7SdNVVapG8TiLFHXbhd8ANEM"})
+@GetMapping(value = "/daily_train/gen-daily/{date}")
+CommonRespond<Boolean> gen(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date);
 }
