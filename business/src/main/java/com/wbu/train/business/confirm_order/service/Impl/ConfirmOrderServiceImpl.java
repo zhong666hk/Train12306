@@ -20,11 +20,14 @@ import com.wbu.train.business.daily_train_seat.domain.DailyTrainSeat;
 import com.wbu.train.business.daily_train_seat.service.DailyTrainSeatService;
 import com.wbu.train.business.daily_train_ticket.domain.DailyTrainTicket;
 import com.wbu.train.business.daily_train_ticket.service.DailyTrainTicketService;
+import com.wbu.train.business.feign.MemberFeign;
 import com.wbu.train.common.context.LoginMemberContext;
 import com.wbu.train.common.enums.ConfirmOrderStatusEnum;
 import com.wbu.train.common.enums.SeatColEnum;
 import com.wbu.train.common.enums.SeatTypeEnum;
 import com.wbu.train.common.exception.MyException;
+import com.wbu.train.common.req.MemberTicketSaveReq;
+import com.wbu.train.common.respon.CommonRespond;
 import com.wbu.train.common.util.SnowUtil;
 import com.wbu.train.business.confirm_order.domain.ConfirmOrder;
 import com.wbu.train.business.confirm_order.mapper.ConfirmOrderMapper;
@@ -62,6 +65,9 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
     @Autowired
     private DailyTrainSeatService dailyTrainSeatService;
     Logger LOG = LoggerFactory.getLogger(ConfirmOrderServiceImpl.class);
+
+    @Autowired
+    private MemberFeign memberFeign;
 
     @Override
     public boolean saveConfirmOrder(ConfirmOrderSaveReq req) {
@@ -215,7 +221,7 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
             3.为会员增加购买记录
             4.更新确认订单成功
          */
-        confirmOrderServiceImpl.afterDoConfirm(dailyTrainTicket,finalSeatList,tickets);
+        confirmOrderServiceImpl.afterDoConfirm(dailyTrainTicket,finalSeatList,tickets,confirmOrder);
     }
 
     /*六、选中座位后事务处理 ---尽量做短事务-->重新弄个类
@@ -225,7 +231,7 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
             4.更新确认订单成功
          */
     @Transactional
-    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket,List<DailyTrainSeat> finalSeatList,List<ConfirmOrderTicketReq> tickets){
+    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket,List<DailyTrainSeat> finalSeatList,List<ConfirmOrderTicketReq> tickets,ConfirmOrder confirmOrder){
         //1.座位表修改售卖情况sell;---用new 一个对象来部分更新
         for (int i = 0; i < finalSeatList.size(); i++) {
             DailyTrainSeat seatForUpdate = new DailyTrainSeat();
@@ -269,6 +275,37 @@ public class ConfirmOrderServiceImpl extends ServiceImpl<ConfirmOrderMapper, Con
             if (resolute<0){
                 throw new MyException(40000,"影响区间车票减少异常");
             }
+            /*
+               3.为会员增加购买记录
+             */
+            ConfirmOrderTicketReq ticket= tickets.get(i);
+
+            MemberTicketSaveReq memberTicketSaveReq = new MemberTicketSaveReq();
+            memberTicketSaveReq.setMemberId(LoginMemberContext.getId());
+            memberTicketSaveReq.setPassengerId(ticket.getPassengerId());
+            memberTicketSaveReq.setPassengerName(ticket.getPassengerName());
+            memberTicketSaveReq.setDate(dailyTrainTicket.getDate());
+            memberTicketSaveReq.setTrainCode(dailyTrainTicket.getTrainCode());
+            memberTicketSaveReq.setCarriageIndex(dailyTrainSeat.getCarriageIndex());
+            memberTicketSaveReq.setRow(dailyTrainSeat.getRow());
+            memberTicketSaveReq.setCol(dailyTrainSeat.getCol());
+            memberTicketSaveReq.setStart(dailyTrainTicket.getStart());
+            memberTicketSaveReq.setStartTime(dailyTrainTicket.getStartTime());
+            memberTicketSaveReq.setEnd(dailyTrainTicket.getEnd());
+            memberTicketSaveReq.setEndTime(dailyTrainTicket.getEndTime());
+            memberTicketSaveReq.setSeatType(dailyTrainSeat.getSeatType());
+            CommonRespond<Boolean> booleanCommonRespond = memberFeign.saveTicket(memberTicketSaveReq);
+            if (booleanCommonRespond.getCode()!=200){
+                throw new MyException(40000,booleanCommonRespond.getMessage());
+            }
+            LOG.info("feign调用member接口,返回{}",booleanCommonRespond);
+
+            //4.更新确认订单成功 更新订单状态为成功
+            ConfirmOrder newConfirmOrder = new ConfirmOrder();
+            newConfirmOrder.setId(confirmOrder.getId());
+            newConfirmOrder.setUpdateTime(DateTime.now());
+            newConfirmOrder.setStatus(ConfirmOrderStatusEnum.SUCCESS.getCode());
+            this.updateById(newConfirmOrder);
         }
 
 

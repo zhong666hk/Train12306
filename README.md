@@ -1101,7 +1101,6 @@ public class BatchApplication {
 
 
 
-
 ## 小结：
 ```txt valid 注解
  * @NotEmpty 用在集合类上面
@@ -1122,4 +1121,20 @@ public class BatchApplication {
 * @JsonFormat针对的是 post请求
 * @DateTimeFormat 针对的是Get请求
 ```
-
+```txt  openfeign的远程调用时的token缺失的问题？
+一、 通过配置openfeign的配置
+  1.1.配置类
+        @Configuration
+        public class FeignConfiguration implements RequestInterceptor {
+      
+          @Override
+          public void apply(RequestTemplate requestTemplate) {
+              ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+              HttpServletRequest request = attributes.getRequest();
+              requestTemplate.header("jwt-Token", request.getHeader("jwt-Token"));
+          }
+        }
+     RequestInterceptor 接口是Feign提供的一种机制，用于在Feign发起请求之前，对请求进行修改或者添加额外的处理逻辑。RequestInterceptor 接口中只有一个方法 apply，该方法接收一个 RequestTemplate 对象，通过该对象可以对请求进行修改。你可以在这个方法中添加请求头、修改请求路径、设置请求参数等操作。
+  1.2、在@FeginClient注解添加Configuration
+  @FeignClient(name = "server_name", fallback = XxxFallBackServiceClientImpl.class, configuration = FeignConfiguration.class)
+```
